@@ -23,7 +23,7 @@ public class Tile {
         return entity;
     }
 
-    public void setEntity(Entity entity) {
+    void setEntity(Entity entity) {
         this.entity = entity;
     }
 
@@ -31,25 +31,33 @@ public class Tile {
         return new Tile(x, y);
     }
 
+    public boolean isOccupied() {
+        return entity != null;
+    }
+
     @Override
     public String toString() {
-        return " ";
+        return isOccupied() ? entity.toString() : " ";
     }
 
     public boolean canOccupy() {
         return true;
     }
 
-    static Tile get(char c, int x, int y) {
+    public static Tile get(char c, int x, int y) {
         switch (c) {
             case '.':
                 return BoxSpot.get(x, y);
             case '@':
-                Tile t = Tile.get(x, y);
-                Entity e = Player.get(t);
-                return Player.get();
+                Tile tp = Tile.get(x, y);
+                Entity ep = Player.get(tp);
+                tp.setEntity(ep);
+                return tp;
             case '$':
-                return Box.get(x, y);
+                Tile tb = Tile.get(x, y);
+                Entity eb = Box.get(tb);
+                tb.setEntity(eb);
+                return tb;
             case '#':
                 return Wall.get(x, y);
             default:

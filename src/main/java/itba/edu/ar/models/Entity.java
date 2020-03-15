@@ -16,5 +16,7 @@ public abstract class Entity {
         return tile.getY();
     }
 
-
+    public boolean move(Tile nextTile) {
+        return true;
+    }
 }

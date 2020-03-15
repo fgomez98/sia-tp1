@@ -12,6 +12,6 @@ public class BoxSpot extends Tile {
 
     @Override
     public String toString() {
-        return ".";
+        return isOccupied() ? this.getEntity().toString() : ".";
     }
 }

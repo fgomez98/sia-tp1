@@ -33,14 +33,17 @@ public class Board {
         emptyTiles = new LinkedList<>();
         for (Tile t : tilesList) {
             tiles[t.getX()][t.getY()] = t;
-            if (t instanceof Wall) {
-                walls.add((Wall) t);
-            } else if (t instanceof Player) {
-                player = (Player) t;
-            } else if (t instanceof Box) {
-                boxes.add((Box) t);
-            } else if (t instanceof BoxSpot) {
+            if (t instanceof BoxSpot) {
                 boxSpots.add((BoxSpot) t);
+            } else if (t instanceof Wall) {
+                walls.add((Wall) t);
+            }
+            if (t.isOccupied()) {
+                if (t.getEntity() instanceof Player) {
+                    player = (Player) t.getEntity();
+                } else if (t.getEntity() instanceof Box) {
+                    boxes.add((Box) t.getEntity());
+                }
             }
         }
         for (int i = 0; i < rows; i++) {
@@ -65,7 +68,6 @@ public class Board {
                 char[] chars = scanner.nextLine().toCharArray();
                 for (char c : chars) {
                     tiles.add(Tile.get(c, X, y++));
-
                 }
                 X++;
                 Y = (y > Y) ? y : Y;
@@ -86,18 +88,6 @@ public class Board {
             sb.append('\n');
         }
         return sb.toString();
-    }
-
-    public Tile[][] getTiles() {
-        return tiles;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getCols() {
-        return cols;
     }
 
     public Player getPlayer() {
