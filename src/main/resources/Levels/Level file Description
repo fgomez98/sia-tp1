@@ -1,0 +1,8 @@
+row
+cols
+\n
+level
+use # -> wall
+    . objective
+    $ box
+    @ me	
