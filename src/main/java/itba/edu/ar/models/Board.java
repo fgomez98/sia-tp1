@@ -118,9 +118,9 @@ public class Board {
         return true;
     }
 
-    public List<Directions> getPosibleMovements() {
-        List<Directions> movements = new LinkedList<>();
-        for (Directions d : Directions.directions) {
+    public List<Direction> getPosibleMovements() {
+        List<Direction> movements = new LinkedList<>();
+        for (Direction d : Direction.directions) {
             if (player.canMove(tiles, d)) {
                 movements.add(d);
             }
@@ -128,7 +128,7 @@ public class Board {
         return movements;
     }
 
-    public void move(Entity entity, Directions direction) {
+    public void move(Entity entity, Direction direction) {
         /* EL casillero al cual me quiero mover */
         Tile nextTile = tiles[entity.getX() + direction.getX()][entity.getY() + direction.getY()];
 

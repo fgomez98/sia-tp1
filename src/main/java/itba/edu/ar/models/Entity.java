@@ -29,6 +29,6 @@ public abstract class Entity {
         this.tile.setEntity(null);
     }
 
-    public abstract boolean canMove(Tile[][] tileMap, Directions d);
+    public abstract boolean canMove(Tile[][] tileMap, Direction d);
 
 }

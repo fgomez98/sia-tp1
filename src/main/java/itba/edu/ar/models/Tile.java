@@ -6,7 +6,7 @@ public class Tile {
     private Entity entity; // Entidad que almacenan dentro del casillero si es que pueden
 
     Tile(final int x, final int y) {
-        this.coordinate = new Coordinate(x,y);
+        this.coordinate = Coordinate.from(x,y);
     }
 
     public int getX() {

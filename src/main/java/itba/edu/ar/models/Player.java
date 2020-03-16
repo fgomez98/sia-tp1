@@ -11,7 +11,7 @@ public class Player extends Entity {
     }
 
     @Override
-    public boolean canMove(Tile[][] tileMap, Directions d) {
+    public boolean canMove(Tile[][] tileMap, Direction d) {
         /* EL casillero al cual me quiero mover */
         Tile nextTile = tileMap[this.getX() + d.getX()][this.getY() + d.getY()];
          /* "Si el tile al cual me quiero mover no es una Wall" */
