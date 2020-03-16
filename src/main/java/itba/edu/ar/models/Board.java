@@ -37,7 +37,7 @@ public class Board {
             } else if (t instanceof Wall) {
                 walls.add((Wall) t);
             }
-            if (t.isOccupied()) {
+            if (t.isFree()) {
                 if (t.getEntity() instanceof Player) {
                     player = (Player) t.getEntity();
                 } else if (t.getEntity() instanceof Box) {
@@ -107,6 +107,43 @@ public class Board {
 
     public List<Tile> getEmptyTiles() {
         return emptyTiles;
+    }
+
+    public boolean isComplete() {
+        for (Goal g : goals) {
+            if (g.isFree() && !(g.getEntity() instanceof Box)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Directions> getPosibleMovements() {
+        List<Directions> movements = new LinkedList<>();
+        for (Directions d : Directions.directions) {
+            if (player.canMove(tiles, d)) {
+                movements.add(d);
+            }
+        }
+        return movements;
+    }
+
+    public void move(Entity entity, Directions direction) {
+        /* EL casillero al cual me quiero mover */
+        Tile nextTile = tiles[entity.getX() + direction.getX()][entity.getY() + direction.getY()];
+
+        if (!entity.canMove(tiles, direction)) {
+            return;
+        }
+
+        /* Primero movemos a la entidad  que se encuentra en el casillero si es que hay una */
+        if (!nextTile.isFree()) {
+            move(nextTile.getEntity(), direction);
+        }
+
+        /* No hay nadie en el Tile, procedemos a movernos ahi */
+        entity.remove(); /* Me voy de mi tile */
+        entity.put(nextTile); /* Me posiciono en el proximo tile */
     }
 
     public static void main(String[] args) {

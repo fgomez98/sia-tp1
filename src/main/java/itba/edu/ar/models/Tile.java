@@ -29,15 +29,21 @@ public class Tile {
         return new Tile(x, y);
     }
 
-    public boolean isOccupied() {
+    /*
+        Retorna true o false si hay una entidad en su interior o no
+     */
+    public boolean isFree() {
         return entity != null;
     }
 
     @Override
     public String toString() {
-        return isOccupied() ? entity.toString() : " ";
+        return isFree() ? entity.toString() : " ";
     }
 
+    /*
+        Retorna true o false si el tile puede guardar en su interior una entidad
+     */
     public boolean canOccupy() {
         return true;
     }

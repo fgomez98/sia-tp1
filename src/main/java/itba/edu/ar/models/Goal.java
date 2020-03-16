@@ -12,6 +12,6 @@ public class Goal extends Tile {
 
     @Override
     public String toString() {
-        return isOccupied() ? this.getEntity().toString() : ".";
+        return isFree() ? this.getEntity().toString() : ".";
     }
 }

@@ -20,11 +20,15 @@ public abstract class Entity {
         this.tile.setEntity(this);
     }
 
+    public void put(Tile tile) {
+        this.tile = tile;
+        this.put();
+    }
+
     public void remove() {
         this.tile.setEntity(null);
     }
 
-    public boolean move(Tile nextTile) {
-        return true;
-    }
+    public abstract boolean canMove(Tile[][] tileMap, Directions d);
+
 }
