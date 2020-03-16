@@ -1,4 +1,4 @@
-package itba.edu.ar.models;
+package itba.edu.ar.model;
 
 public class Player extends Entity {
 

@@ -1,7 +1,7 @@
 package itba.edu.ar.ai;
 
-import itba.edu.ar.models.Coordinate;
-import itba.edu.ar.models.Direction;
+import itba.edu.ar.model.Coordinate;
+import itba.edu.ar.model.Direction;
 
 import java.util.List;
 import java.util.Objects;

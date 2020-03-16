@@ -1,4 +1,4 @@
-package itba.edu.ar.models;
+package itba.edu.ar.model;
 
 import java.io.File;
 import java.io.IOException;

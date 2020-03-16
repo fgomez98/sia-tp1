@@ -1,7 +1,7 @@
-package model2;
+package itba.edu.ar.model2;
 
-import itba.edu.ar.models.Coordinate;
-import itba.edu.ar.models.Direction;
+import itba.edu.ar.model.Coordinate;
+import itba.edu.ar.model.Direction;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import static model2.Entity.*;
+import static itba.edu.ar.model2.Entity.*;
 
 public class Board {
 

@@ -1,4 +1,4 @@
-package model2;
+package itba.edu.ar.model2;
 
 public enum Entity {
 
