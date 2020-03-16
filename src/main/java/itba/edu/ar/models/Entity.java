@@ -16,6 +16,14 @@ public abstract class Entity {
         return tile.getY();
     }
 
+    public void put() {
+        this.tile.setEntity(this);
+    }
+
+    public void remove() {
+        this.tile.setEntity(null);
+    }
+
     public boolean move(Tile nextTile) {
         return true;
     }

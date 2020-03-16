@@ -20,9 +20,8 @@ public class Board {
 
     /*
         Se asume que los tableros son correctos y que siempre hay un jugador en los mismos
-     */
+    */
 
-    @SuppressWarnings("ConstantConditions")
     private Board(final int rows, final int cols, List<Tile> tilesList) {
         this.rows = rows;
         this.cols = cols;
