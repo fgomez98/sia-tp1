@@ -1,13 +1,13 @@
 package itba.edu.ar.models;
 
-public class BoxSpot extends Tile {
+public class Goal extends Tile {
 
-    private BoxSpot(final int x, final int y) {
+    private Goal(final int x, final int y) {
         super(x, y);
     }
 
-    public static BoxSpot get(final int x, final int y) {
-        return new BoxSpot(x, y);
+    public static Goal get(final int x, final int y) {
+        return new Goal(x, y);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class Board {
     private Tile[][] tiles;
     private List<Wall> walls;
     private List<Box> boxes;
-    private List<BoxSpot> boxSpots;
+    private List<Goal> goals;
     private List<Tile> emptyTiles;
     private Player player;
     private final int rows;
@@ -22,19 +22,18 @@ public class Board {
         Se asume que los tableros son correctos y que siempre hay un jugador en los mismos
      */
 
-    @SuppressWarnings("ConstantConditions")
     private Board(final int rows, final int cols, List<Tile> tilesList) {
         this.rows = rows;
         this.cols = cols;
         this.tiles = new Tile[rows][cols];
-        boxSpots = new LinkedList<>();
+        goals = new LinkedList<>();
         boxes = new LinkedList<>();
         walls = new LinkedList<>();
         emptyTiles = new LinkedList<>();
         for (Tile t : tilesList) {
             tiles[t.getX()][t.getY()] = t;
-            if (t instanceof BoxSpot) {
-                boxSpots.add((BoxSpot) t);
+            if (t instanceof Goal) {
+                goals.add((Goal) t);
             } else if (t instanceof Wall) {
                 walls.add((Wall) t);
             }
@@ -70,7 +69,7 @@ public class Board {
                     tiles.add(Tile.get(c, X, y++));
                 }
                 X++;
-                Y = (y > Y) ? y : Y;
+                Y = Math.max(y, Y);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,8 +101,8 @@ public class Board {
         return boxes;
     }
 
-    public List<BoxSpot> getBoxSpots() {
-        return boxSpots;
+    public List<Goal> getGoals() {
+        return goals;
     }
 
     public List<Tile> getEmptyTiles() {
