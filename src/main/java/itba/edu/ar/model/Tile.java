@@ -33,12 +33,12 @@ public class Tile {
         Retorna true o false si hay una entidad en su interior o no
      */
     public boolean isFree() {
-        return entity != null;
+        return entity == null;
     }
 
     @Override
     public String toString() {
-        return isFree() ? entity.toString() : " ";
+        return isFree() ? " " : entity.toString();
     }
 
     /*

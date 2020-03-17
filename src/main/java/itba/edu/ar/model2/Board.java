@@ -199,7 +199,27 @@ public class Board {
     }
 
     public static void main(String[] args) {
-        Board b = Board.from("./src/main/resources/Levels/Level 1");
-        System.out.println(b);
+        Board board = Board.from("./src/main/resources/Levels/Level 1");
+
+        System.out.println("Type Up, Down, Right, Left to move sokoban");
+
+        while (!board.isComplete()) {
+            System.out.println(board);
+
+            System.out.println("We asume that you will NOT enter an invalid movement");
+            StringBuilder sb = new StringBuilder("Posible movements: ");
+            board.getPosibleMovements().forEach(direction -> sb.append(direction.name()).append(' '));
+            System.out.println(sb.toString());
+
+            System.out.println("Your move...");
+
+            Scanner input = new Scanner(System.in);
+            String line = input.nextLine();
+
+            Direction movement = Direction.valueOf(line.trim().toUpperCase());
+
+            board.move(movement);
+        }
+
     }
 }

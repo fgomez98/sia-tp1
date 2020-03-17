@@ -37,7 +37,7 @@ public class Board {
             } else if (t instanceof Wall) {
                 walls.add((Wall) t);
             }
-            if (t.isFree()) {
+            if (!t.isFree()) {
                 if (t.getEntity() instanceof Player) {
                     player = (Player) t.getEntity();
                 } else if (t.getEntity() instanceof Box) {
@@ -111,7 +111,7 @@ public class Board {
 
     public boolean isComplete() {
         for (Goal g : goals) {
-            if (g.isFree() && !(g.getEntity() instanceof Box)) {
+            if (g.isFree() || !g.isFree() && !(g.getEntity() instanceof Box)) {
                 return false;
             }
         }
@@ -128,7 +128,7 @@ public class Board {
         return movements;
     }
 
-    public void move(Entity entity, Direction direction) {
+    private void move(Entity entity, Direction direction) {
         /* EL casillero al cual me quiero mover */
         Tile nextTile = tiles[entity.getX() + direction.getX()][entity.getY() + direction.getY()];
 
@@ -146,9 +146,36 @@ public class Board {
         entity.put(nextTile); /* Me posiciono en el proximo tile */
     }
 
-    public static void main(String[] args) {
-        Board b = Board.from("./src/main/resources/Levels/Level 1");
-        System.out.println(b);
+    /*
+        Mueve el jugador
+     */
+    public void move(Direction direction) {
+        move(player, direction);
     }
 
+    public static void main(String[] args) {
+        Board board = Board.from("./src/main/resources/Levels/Level 1");
+
+        System.out.println("Type Up, Down, Right, Left to move sokoban");
+
+        while (!board.isComplete()) {
+            System.out.println(board);
+
+            System.out.println("We asume that you will NOT enter an invalid movement");
+            StringBuilder sb = new StringBuilder("Posible movements: ");
+            board.getPosibleMovements().forEach(direction -> sb.append(direction.name()).append(' '));
+            System.out.println(sb.toString());
+
+            System.out.println("Your move...");
+
+            Scanner input = new Scanner(System.in);
+            String line = input.nextLine();
+
+            Direction movement = Direction.valueOf(line.trim().toUpperCase());
+
+            board.move(movement);
+        }
+
+    }
 }
+
