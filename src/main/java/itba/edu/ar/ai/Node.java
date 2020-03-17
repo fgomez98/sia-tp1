@@ -74,7 +74,7 @@ public class Node {
         return Objects.hash(playerPosition, boxPosition);
     }
 
-    public class Edge {
+    private class Edge {
         private int cost;
         private Node adjecent;
 
