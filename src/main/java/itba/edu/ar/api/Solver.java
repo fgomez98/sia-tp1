@@ -1,4 +1,4 @@
-package itba.edu.ar.ai;
+package itba.edu.ar.api;
 
 public interface Solver {
 
