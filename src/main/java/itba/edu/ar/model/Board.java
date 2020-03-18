@@ -146,6 +146,16 @@ public class Board {
         entity.put(nextTile); /* Me posiciono en el proximo tile */
     }
 
+    public void changePlayingState(State state) {
+        this.player.remove();
+        this.boxes.forEach(Box::remove);
+        state.getPlayer().put();
+        state.getBoxes().forEach(Box::put);
+    }
+
+    public State getState() {
+        return State.from(boxes, player);
+    }
     /*
         Mueve el jugador
      */

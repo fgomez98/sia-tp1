@@ -5,9 +5,7 @@ import itba.edu.ar.model.Direction;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static itba.edu.ar.model2.Entity.*;
 
@@ -16,7 +14,7 @@ public class Board {
     private int rows;
     private int cols;
     private Entity[][] tiles;
-    private final List<Coordinate> goals;
+    private final Set<Coordinate> goals; /* LinkedList -> Set  como se utilizan solo los metodos .contains() y for each, hash set es mas performante*/
     private List<Coordinate> boxes;
     private Coordinate player;
 
@@ -32,7 +30,7 @@ public class Board {
         return tiles;
     }
 
-    public List<Coordinate> getGoals() {
+    public Set<Coordinate> getGoals() {
         return goals;
     }
 
@@ -53,7 +51,7 @@ public class Board {
         this.cols = cols;
         this.tiles = new Entity[rows][cols];
         this.boxes = new LinkedList<>();
-        this.goals = new LinkedList<>();
+        this.goals = new HashSet<>();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (tiles[i][j] == null) {
@@ -123,6 +121,15 @@ public class Board {
         return true;
     }
 
+    public boolean isComplete(State state) {
+        for (Coordinate boxCoords : state.getBoxes()) {
+            if (!goals.contains(boxCoords)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public List<Direction> getPosibleMovements() {
         List<Direction> movements = new LinkedList<>();
         for (Direction d : Direction.directions) {
@@ -181,9 +188,32 @@ public class Board {
         tiles[oldPlayerCoords.getX()][oldPlayerCoords.getY()] = goals.contains(oldPlayerCoords) ? GOAL : TILE;
     }
 
-    public void changePlayingState(Coordinate player, List<Coordinate> boxes) {
-        this.boxes = boxes;
-        this.player = player;
+    public void changePlayingState(State state) {
+        /*
+            Podria no poner los GOALS de nuevo en el tablero ya que conozco sus coordenadas para ver si gano o no u otros.
+            Entonces solo me interesaria updetear las posiciones de los GOALS en sus lugares corresponientes cuando imprimo
+            Bstaria con solo remover las entidades viejas y remplazarlas por TILES
+         */
+        if (goals.contains(player)) {
+            tiles[player.getX()][player.getY()] = GOAL;
+        } else {
+            tiles[player.getX()][player.getY()] = TILE;
+        }
+        for (Coordinate box :boxes) {
+            if (goals.contains(box)) {
+                tiles[box.getX()][box.getY()] = GOAL;
+            } else {
+                tiles[player.getX()][player.getY()] = TILE;
+            }
+        }
+        boxes = state.getBoxes();
+        player = state.getPlayer();
+        tiles[player.getX()][player.getY()] = PLAYER;
+        boxes.forEach(box -> tiles[box.getX()][box.getY()] = BOX);
+    }
+
+    public State getState() {
+        return State.from(boxes, player);
     }
 
     @Override

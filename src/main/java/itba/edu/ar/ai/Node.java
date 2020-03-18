@@ -1,77 +1,58 @@
 package itba.edu.ar.ai;
 
-import itba.edu.ar.model.Coordinate;
 import itba.edu.ar.model.Direction;
+import itba.edu.ar.model2.State;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 public class Node {
 
-    private Coordinate playerPosition;
-    private List<Coordinate> boxPosition;
-    private List<Direction> movements;
-    private Set<Edge> childs;
+    private State state;
+    private Queue<Direction> movements; /* Si solo se va a usar para imprmir las acciones ralizadas por que no usar String Builder? */
+    private Set<Edge> children;
+    private final int depth;
 
-    public Node(Coordinate playerPosition, List<Coordinate> boxPosition, List<Direction> movements) {
-        this.playerPosition = playerPosition;
-        this.boxPosition = boxPosition;
+    public Node(State state, Queue<Direction> movements, int depth) {
+        this(state, depth);
         this.movements = movements;
+    }
+
+    public Node(State state, int depth) {
+        this.depth = depth;
+        this.state = state;
+        this.children = new HashSet<>();
+        this.movements = new LinkedList<>();
     }
 
     public void addChild(Node node, int edgeCost) {
-        childs.add(new Edge(edgeCost, node));
+        children.add(new Edge(edgeCost, node));
     }
 
     public void addChild(Node node) {
-        childs.add(new Edge(node));
+        children.add(new Edge(node));
     }
 
-    public Set<Edge> getChilds() {
-        return childs;
+    public Set<Edge> getChildren() {
+        return children;
     }
 
-    public Coordinate getPlayerPosition() {
-        return playerPosition;
-    }
-
-    public void setPlayerPosition(Coordinate playerPosition) {
-        this.playerPosition = playerPosition;
-    }
-
-    public List<Coordinate> getBoxPosition() {
-        return boxPosition;
-    }
-
-    public void setBoxPosition(List<Coordinate> boxPosition) {
-        this.boxPosition = boxPosition;
-    }
-
-    public List<Direction> getMovements() {
+    public Queue<Direction> getMovements() {
         return movements;
-    }
-
-    public void setMovements(List<Direction> movements) {
-        this.movements = movements;
     }
 
     public void addMovement(Direction direction){
         movements.add(direction);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Node node = (Node) o;
-        return Objects.equals(playerPosition, node.playerPosition) &&
-                Objects.equals(boxPosition, node.boxPosition);
+    public int getDepth() {
+        return depth;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(playerPosition, boxPosition);
+    public State getState() {
+        return state;
     }
 
     private class Edge {

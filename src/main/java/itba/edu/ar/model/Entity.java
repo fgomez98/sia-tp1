@@ -25,6 +25,10 @@ public abstract class Entity {
         this.put();
     }
 
+    public Tile getTile() {
+        return tile;
+    }
+
     public void remove() {
         this.tile.setEntity(null);
     }
