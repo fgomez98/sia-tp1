@@ -55,6 +55,24 @@ public class Node {
         return state;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Node node = (Node) o;
+
+        if (depth != node.depth) return false;
+        if (state != null ? !state.equals(node.state) : node.state != null) return false;
+        if (movements != null ? !movements.equals(node.movements) : node.movements != null) return false;
+        return children != null ? children.equals(node.children) : node.children == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return state != null ? state.hashCode() : 0;
+    }
+
     private class Edge {
         private int cost;
         private Node adjecent;

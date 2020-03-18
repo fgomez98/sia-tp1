@@ -203,10 +203,10 @@ public class Board {
             if (goals.contains(box)) {
                 tiles[box.getX()][box.getY()] = GOAL;
             } else {
-                tiles[player.getX()][player.getY()] = TILE;
+                tiles[box.getX()][box.getY()] = TILE;
             }
         }
-        boxes = state.getBoxes();
+        boxes = new LinkedList<>(state.getBoxes());
         player = state.getPlayer();
         tiles[player.getX()][player.getY()] = PLAYER;
         boxes.forEach(box -> tiles[box.getX()][box.getY()] = BOX);
