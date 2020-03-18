@@ -1,38 +1,32 @@
 package itba.edu.ar.model;
 
-public abstract class Entity {
+public enum Entity {
 
-    private Tile tile; // casillero en el que se encuentra
+    PLAYER('@'), BOX('$'), GOAL('.'), WALL('#'), TILE(' ');
 
-    Entity(Tile tile) {
-        this.tile = tile;
+    private final char c;
+
+    private Entity(char c) {
+        this.c = c;
     }
 
-    public int getX() {
-        return tile.getX();
+    @Override
+    public String toString() {
+        return String.valueOf(c);
     }
 
-    public int getY() {
-        return tile.getY();
+    public static Entity from(char c) {
+        switch (c) {
+            case '.':
+                return GOAL;
+            case '@':
+                return PLAYER;
+            case '$':
+                return BOX;
+            case '#':
+                return WALL;
+            default:
+                return TILE;
+        }
     }
-
-    public void put() {
-        this.tile.setEntity(this);
-    }
-
-    public void put(Tile tile) {
-        this.tile = tile;
-        this.put();
-    }
-
-    public Tile getTile() {
-        return tile;
-    }
-
-    public void remove() {
-        this.tile.setEntity(null);
-    }
-
-    public abstract boolean canMove(Tile[][] tileMap, Direction d);
-
 }

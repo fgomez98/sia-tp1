@@ -1,7 +1,7 @@
 package itba.edu.ar.ai;
 
 import itba.edu.ar.model.Direction;
-import itba.edu.ar.model2.State;
+import itba.edu.ar.model.State;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,6 +14,7 @@ public class Node {
     private Queue<Direction> movements; /* Si solo se va a usar para imprmir las acciones ralizadas por que no usar String Builder? */
     private Set<Edge> children;
     private final int depth;
+    Node parent;
 
     public Node(State state, Queue<Direction> movements, int depth) {
         this(state, depth);
@@ -53,6 +54,24 @@ public class Node {
 
     public State getState() {
         return state;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Node node = (Node) o;
+
+        if (depth != node.depth) return false;
+        if (state != null ? !state.equals(node.state) : node.state != null) return false;
+        if (movements != null ? !movements.equals(node.movements) : node.movements != null) return false;
+        return children != null ? children.equals(node.children) : node.children == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return state != null ? state.hashCode() : 0;
     }
 
     private class Edge {
