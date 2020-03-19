@@ -36,7 +36,6 @@ public class SolverImpl implements Solver {
 
         while (!frontier.isEmpty()) {
             Node node = frontier.pop();
-            printSolution(node);
             explored.add(node.hashCode()); /* Lo marcamos como visto */
             if (board.isComplete(node.getState())) {
                 printSolution(node);
@@ -81,7 +80,7 @@ public class SolverImpl implements Solver {
 
         System.out.println("exploted:" + explodedNodes);
         System.out.println("nodes:" + nodes);
-        System.out.println("time:" + (System.currentTimeMillis() - start) / 1000);
+        System.out.println("time:" + (System.currentTimeMillis() - start) );
 
     }
 }
