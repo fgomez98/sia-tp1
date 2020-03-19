@@ -42,8 +42,10 @@ public class State {
 
     @Override
     public int hashCode() {
-        int result = boxes.hashCode();
-        result = 31 * result + player.hashCode();
+        int result = player.hashCode();
+        for (Coordinate box : boxes) {
+            result = 31 * result + box.hashCode();
+        }
         return result;
     }
 }

@@ -13,6 +13,8 @@ import static itba.edu.ar.api.SearchAlgorithm.DFS;
 
 public class SolverImpl implements Solver {
 
+    private static long nodes = 0;
+    private static long explodedNodes = 0;
     private Board board;
     private Node root;
     private Storage frontier;
@@ -29,7 +31,7 @@ public class SolverImpl implements Solver {
      */
     @Override
     public void solve() {
-        root = new Node(board.getInitialState(), new LinkedList<>(), 0);
+        root = new Node(board.getInitialState(), 0);
         frontier.push(root);
 
         while (!frontier.isEmpty()) {
@@ -43,29 +45,21 @@ public class SolverImpl implements Solver {
             /* Explotamos el nodo y generamos sus hijos */
             List<Node> children = explode(node);
             for (Node child : children) {
+                explodedNodes++;
                 if (!explored.contains(child.hashCode())) {
                     frontier.push(child);
+                    nodes++;
                 }
             }
         }
-    }
-
-    private  boolean lookUp(Node parent, State state) {
-        if (parent == null) {
-            return false;
-        }
-        return lookUp(parent.parent, state)
-                || state.hashCode() == parent.getState().hashCode();
     }
 
     private List<Node> explode(Node node) {
         List<Node> children = new LinkedList<>();
         for (Direction direction : board.getPosibleMovements(node.getState())) {
             State childState = board.move(node.getState(), direction);
-            Queue<Direction> movements = new LinkedList<>(node.getMovements());
-            movements.offer(direction);
-            Node child = new Node(childState, movements, node.getDepth() + 1);
-            child.parent = node;
+            Node child = new Node(childState, node.getMovements(), node.getDepth() + 1);
+            child.addMovement(direction);
             children.add(child);
             node.addChild(child, 1);
         }
@@ -73,15 +67,21 @@ public class SolverImpl implements Solver {
     }
 
     private void printSolution(Node node) {
-        node.getMovements().forEach(m -> System.out.print(m.name() + ", "));
-        System.out.println();
+        System.out.println(node.getMovements());
         System.out.println(board.print(node.getState()));
     }
 
     public static void main(String args[]) {
         Board board = Board.from("./src/main/resources/Levels/Level 1");
         SolverImpl solver = new SolverImpl(board, DFS);
+
+        long start = System.currentTimeMillis();
+
         solver.solve();
-        System.out.println(solver.frontier.isEmpty());
+
+        System.out.println("exploted:" + explodedNodes);
+        System.out.println("nodes:" + nodes);
+        System.out.println("time:" + (System.currentTimeMillis() - start) / 1000);
+
     }
 }

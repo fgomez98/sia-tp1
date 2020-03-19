@@ -4,28 +4,25 @@ import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 
 public class Node {
 
     private State state;
-    private Queue<Direction> movements; /* Si solo se va a usar para imprmir las acciones ralizadas por que no usar String Builder? */
+    private StringBuilder movements;
     private Set<Edge> children;
     private final int depth;
-    Node parent;
 
-    public Node(State state, Queue<Direction> movements, int depth) {
+    public Node(State state, String movements, int depth) {
         this(state, depth);
-        this.movements = movements;
+        this.movements.append(movements);
     }
 
     public Node(State state, int depth) {
         this.depth = depth;
         this.state = state;
         this.children = new HashSet<>();
-        this.movements = new LinkedList<>();
+        this.movements = new StringBuilder();
     }
 
     public void addChild(Node node, int edgeCost) {
@@ -40,12 +37,21 @@ public class Node {
         return children;
     }
 
-    public Queue<Direction> getMovements() {
-        return movements;
+//    public Queue<Direction> getMovements() {
+//        return movements;
+//    }
+//
+//    public void addMovement(Direction direction){
+//        movements.add(direction);
+//    }
+
+
+    public String getMovements() {
+        return movements.toString();
     }
 
-    public void addMovement(Direction direction){
-        movements.add(direction);
+    public void addMovement(Direction direction) {
+        this.movements.append(", ").append(direction.name());
     }
 
     public int getDepth() {
