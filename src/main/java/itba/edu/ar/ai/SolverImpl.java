@@ -112,4 +112,5 @@ public class SolverImpl implements Solver {
         System.out.println("time:" + (System.currentTimeMillis() - start));
 
     }
+
 }

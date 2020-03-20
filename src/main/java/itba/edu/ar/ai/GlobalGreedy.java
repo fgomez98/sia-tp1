@@ -3,28 +3,30 @@ package itba.edu.ar.ai;
 import itba.edu.ar.api.Storage;
 
 import java.util.Comparator;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class GlobalGreedy implements Storage {
 
-    private Set<Node> set;
-    private Comparator<Node> comparator;
+    private SortedSet<Node> set;
 
     private GlobalGreedy() {
+        Comparator<Node> comparator = (n1, n2) -> Integer.compare(((InformedNode)n1).getEvaluation(), ((InformedNode)n2).getEvaluation());
+        set = new TreeSet<>(comparator);
     }
 
-    public static DFSStorage get() {
+    public static DFSStorage getStorage() {
         return null;
     }
 
     @Override
-    public void push(Node node) {
-
+    public Node get() {
+        return set.first();
     }
 
     @Override
-    public Node pop() {
-        return null;
+    public void add(Node node) {
+        set.add(node);
     }
 
     @Override
