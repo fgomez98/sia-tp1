@@ -12,17 +12,17 @@ public class DFSStorage implements Storage {
         stack = new Stack<>();
     }
 
-    public static DFSStorage get() {
+    public static DFSStorage getStorage() {
         return new DFSStorage();
     }
 
     @Override
-    public void push(Node node) {
+    public void add(Node node) {
         stack.push(node);
     }
 
     @Override
-    public Node pop() {
+    public Node get() {
         return stack.pop();
     }
 

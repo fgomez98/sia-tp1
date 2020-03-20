@@ -4,9 +4,9 @@ import itba.edu.ar.ai.Node;
 
 public interface Storage {
 
-    void push(Node node);
+    void add(Node node);
 
-    Node pop();
+    Node get();
 
     boolean isEmpty();
 }
