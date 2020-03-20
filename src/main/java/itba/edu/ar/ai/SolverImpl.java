@@ -9,6 +9,7 @@ import itba.edu.ar.model.State;
 
 import java.util.*;
 
+import static itba.edu.ar.api.SearchAlgorithm.BFS;
 import static itba.edu.ar.api.SearchAlgorithm.DFS;
 
 public class SolverImpl implements Solver {
@@ -32,10 +33,10 @@ public class SolverImpl implements Solver {
     @Override
     public void solve() {
         root = new Node(board.getInitialState(), 0, null);
-        frontier.push(root);
+        frontier.add(root);
 
         while (!frontier.isEmpty()) {
-            Node node = frontier.pop();
+            Node node = frontier.get();
 //            printSolution(node, board, false);
             explored.add(node.getState()); /* Lo marcamos como visto */
             if (board.isComplete(node.getState())) {
@@ -56,7 +57,7 @@ public class SolverImpl implements Solver {
             child.addMovement(direction);
             if (!explored.contains(child.getState())) {
                 nodes++;
-                frontier.push(child);
+                frontier.add(child);
             } else {
 //                printSolution(child, board, true);
             }
@@ -97,7 +98,8 @@ public class SolverImpl implements Solver {
         System.out.println(colorReset);
     }
 
-    public static void main(String args[]) {
+
+    public static void main(String[] args) {
         Board board = Board.from("./src/main/resources/Levels/Level 3");
         SolverImpl solver = new SolverImpl(board, DFS);
 
