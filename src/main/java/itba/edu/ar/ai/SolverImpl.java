@@ -9,8 +9,7 @@ import itba.edu.ar.model.State;
 
 import java.util.*;
 
-import static itba.edu.ar.api.SearchAlgorithm.BFS;
-import static itba.edu.ar.api.SearchAlgorithm.DFS;
+import static itba.edu.ar.api.SearchAlgorithm.*;
 
 public class SolverImpl implements Solver {
 
