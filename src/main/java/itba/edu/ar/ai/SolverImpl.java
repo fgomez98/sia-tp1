@@ -4,6 +4,7 @@ import itba.edu.ar.api.SearchAlgorithm;
 import itba.edu.ar.api.Solver;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.Board;
+import itba.edu.ar.model.Coordinate;
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 
@@ -18,7 +19,7 @@ public class SolverImpl implements Solver {
     private Board board;
     private Node root;
     private Storage frontier;
-    private Set<Integer> explored;
+    private Set<State> explored;
 
     public SolverImpl(Board board, SearchAlgorithm algorithm) {
         this.board = board;
@@ -36,9 +37,10 @@ public class SolverImpl implements Solver {
 
         while (!frontier.isEmpty()) {
             Node node = frontier.pop();
-            printSolution(node, board, false);
-            explored.add(node.hashCode()); /* Lo marcamos como visto */
+//            printSolution(node, board, false);
+            explored.add(node.getState()); /* Lo marcamos como visto */
             if (board.isComplete(node.getState())) {
+                System.out.println("Solution");
                 printSolution(node);
                 return;
             }
@@ -53,7 +55,7 @@ public class SolverImpl implements Solver {
             State childState = board.move(node.getState(), direction);
             Node child = new Node(childState, node.getMovements(), node.getDepth() + 1, node);
             child.addMovement(direction);
-            if (!hasCicle(node, child)) {
+            if (!explored.contains(child.getState())) {
                 nodes++;
                 frontier.push(child);
             } else {
@@ -62,15 +64,22 @@ public class SolverImpl implements Solver {
         }
     }
 
+
+    /*
+
     private boolean hasCicle(Node parent, Node node) {
         if (parent == null) {
-            /* llegamos al root del arbol */
+             llegamos al root del arbol
             return false;
         }
         return parent.hashCode() == node.hashCode() || hasCicle(parent.getParent(), node);
     }
 
+    */
+
+
     private void printSolution(Node node) {
+        node.getMovements().forEach(m -> System.out.print(m.name() + ", "));
         System.out.println();
         System.out.println(board.print(node.getState()));
     }
@@ -83,8 +92,8 @@ public class SolverImpl implements Solver {
             colorReset = "\u001B[0m";
         }
         System.out.println(color);
-//        node.getMovements().forEach(m -> System.out.print(m.name() + ", "));
-//        System.out.println();
+        node.getMovements().forEach(m -> System.out.print(m.name() + ", "));
+        System.out.println();
         System.out.println(board.print(node.getState()));
         System.out.println(colorReset);
     }
@@ -99,7 +108,7 @@ public class SolverImpl implements Solver {
 
         System.out.println("exploted:" + explodedNodes);
         System.out.println("nodes:" + nodes);
-        System.out.println("time:" + (System.currentTimeMillis() - start) );
+        System.out.println("time:" + (System.currentTimeMillis() - start));
 
     }
 }

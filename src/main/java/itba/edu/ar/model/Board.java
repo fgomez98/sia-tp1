@@ -90,9 +90,9 @@ public class Board {
             }
         }
         // can not reach goal
-        for (Coordinate coord : goals) {
-            pullFromGoalDeadLock(coord);
-        }
+//        for (Coordinate coord : goals) {
+//            pullFromGoalDeadLock(coord);
+//        }
     }
 
     private boolean isCorner(Coordinate coord) {

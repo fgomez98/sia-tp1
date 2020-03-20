@@ -11,7 +11,6 @@ public class Node {
     private State state;
     private Queue<Direction> movements;
     private final int depth;
-    private Node parent;
 
     public Node(State state, Queue<Direction> movements, int depth, Node parent) {
         this(state, depth, parent);
@@ -22,32 +21,6 @@ public class Node {
         this.depth = depth;
         this.state = state;
         this.movements = new LinkedList<>();
-        this.parent = parent;
-    }
-
-//    public void addChild(Node node, int edgeCost) {
-//        children.add(new Edge(edgeCost, node));
-//    }
-//
-//    public void addChild(Node node) {
-//        children.add(new Edge(node));
-//    }
-//
-//    public Set<Edge> getChildren() {
-//        return children;
-//    }
-
-//    public Queue<Direction> getMovements() {
-//        return movements;
-//    }
-//
-//    public void addMovement(Direction direction){
-//        movements.add(direction);
-//    }
-
-
-    public Node getParent() {
-        return parent;
     }
 
     public Queue<Direction> getMovements() {
@@ -84,6 +57,7 @@ public class Node {
     }
 
     private class Edge {
+
         private int cost;
         private Node adjecent;
 

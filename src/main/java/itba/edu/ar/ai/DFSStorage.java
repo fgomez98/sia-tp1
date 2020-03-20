@@ -18,9 +18,6 @@ public class DFSStorage implements Storage {
 
     @Override
     public void push(Node node) {
-        if (node.getDepth() >= 50) {
-            return;
-        }
         stack.push(node);
     }
 
