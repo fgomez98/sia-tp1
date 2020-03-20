@@ -3,39 +3,39 @@ package itba.edu.ar.ai;
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Node {
 
     private State state;
-    private StringBuilder movements;
-    private Set<Edge> children;
+    private Queue<Direction> movements;
     private final int depth;
+    private Node parent;
 
-    public Node(State state, String movements, int depth) {
-        this(state, depth);
-        this.movements.append(movements);
+    public Node(State state, Queue<Direction> movements, int depth, Node parent) {
+        this(state, depth, parent);
+        this.movements = new LinkedList<>(movements);
     }
 
-    public Node(State state, int depth) {
+    public Node(State state, int depth, Node parent) {
         this.depth = depth;
         this.state = state;
-        this.children = new HashSet<>();
-        this.movements = new StringBuilder();
+        this.movements = new LinkedList<>();
+        this.parent = parent;
     }
 
-    public void addChild(Node node, int edgeCost) {
-        children.add(new Edge(edgeCost, node));
-    }
-
-    public void addChild(Node node) {
-        children.add(new Edge(node));
-    }
-
-    public Set<Edge> getChildren() {
-        return children;
-    }
+//    public void addChild(Node node, int edgeCost) {
+//        children.add(new Edge(edgeCost, node));
+//    }
+//
+//    public void addChild(Node node) {
+//        children.add(new Edge(node));
+//    }
+//
+//    public Set<Edge> getChildren() {
+//        return children;
+//    }
 
 //    public Queue<Direction> getMovements() {
 //        return movements;
@@ -46,12 +46,16 @@ public class Node {
 //    }
 
 
-    public String getMovements() {
-        return movements.toString();
+    public Node getParent() {
+        return parent;
+    }
+
+    public Queue<Direction> getMovements() {
+        return movements;
     }
 
     public void addMovement(Direction direction) {
-        this.movements.append(", ").append(direction.name());
+        this.movements.offer(direction);
     }
 
     public int getDepth() {
@@ -71,8 +75,7 @@ public class Node {
 
         if (depth != node.depth) return false;
         if (state != null ? !state.equals(node.state) : node.state != null) return false;
-        if (movements != null ? !movements.equals(node.movements) : node.movements != null) return false;
-        return children != null ? children.equals(node.children) : node.children == null;
+        return movements != null ? movements.equals(node.movements) : node.movements == null;
     }
 
     @Override

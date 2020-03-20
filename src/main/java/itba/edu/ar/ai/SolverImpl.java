@@ -31,43 +31,62 @@ public class SolverImpl implements Solver {
      */
     @Override
     public void solve() {
-        root = new Node(board.getInitialState(), 0);
+        root = new Node(board.getInitialState(), 0, null);
         frontier.push(root);
 
         while (!frontier.isEmpty()) {
             Node node = frontier.pop();
+            printSolution(node, board, false);
             explored.add(node.hashCode()); /* Lo marcamos como visto */
             if (board.isComplete(node.getState())) {
                 printSolution(node);
                 return;
             }
             /* Explotamos el nodo y generamos sus hijos */
-            List<Node> children = explode(node);
-            for (Node child : children) {
-                explodedNodes++;
-                if (!explored.contains(child.hashCode())) {
-                    frontier.push(child);
-                    nodes++;
-                }
+            explode(node);
+        }
+    }
+
+    private void explode(Node node) {
+        for (Direction direction : board.getPosibleMovements(node.getState())) {
+            explodedNodes++;
+            State childState = board.move(node.getState(), direction);
+            Node child = new Node(childState, node.getMovements(), node.getDepth() + 1, node);
+            child.addMovement(direction);
+            if (!hasCicle(node, child)) {
+                nodes++;
+                frontier.push(child);
+            } else {
+//                printSolution(child, board, true);
             }
         }
     }
 
-    private List<Node> explode(Node node) {
-        List<Node> children = new LinkedList<>();
-        for (Direction direction : board.getPosibleMovements(node.getState())) {
-            State childState = board.move(node.getState(), direction);
-            Node child = new Node(childState, node.getMovements(), node.getDepth() + 1);
-            child.addMovement(direction);
-            children.add(child);
-            node.addChild(child, 1);
+    private boolean hasCicle(Node parent, Node node) {
+        if (parent == null) {
+            /* llegamos al root del arbol */
+            return false;
         }
-        return children;
+        return parent.hashCode() == node.hashCode() || hasCicle(parent.getParent(), node);
     }
 
     private void printSolution(Node node) {
-        System.out.println(node.getMovements());
+        System.out.println();
         System.out.println(board.print(node.getState()));
+    }
+
+    private static void printSolution(Node node, Board board, boolean visited) {
+        String color = "";
+        String colorReset = "";
+        if (visited) {
+            color = "\u001B[31m";
+            colorReset = "\u001B[0m";
+        }
+        System.out.println(color);
+//        node.getMovements().forEach(m -> System.out.print(m.name() + ", "));
+//        System.out.println();
+        System.out.println(board.print(node.getState()));
+        System.out.println(colorReset);
     }
 
     public static void main(String args[]) {

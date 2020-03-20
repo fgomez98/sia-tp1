@@ -18,7 +18,7 @@ public class DFSStorage implements Storage {
 
     @Override
     public void push(Node node) {
-        if (node.getDepth() >= 40) {
+        if (node.getDepth() >= 50) {
             return;
         }
         stack.push(node);
@@ -31,6 +31,6 @@ public class DFSStorage implements Storage {
 
     @Override
     public boolean isEmpty() {
-        return stack.isEmpty();
+        return stack.empty();
     }
 }
