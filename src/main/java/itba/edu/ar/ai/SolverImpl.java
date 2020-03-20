@@ -4,7 +4,6 @@ import itba.edu.ar.api.SearchAlgorithm;
 import itba.edu.ar.api.Solver;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.Board;
-import itba.edu.ar.model.Coordinate;
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 
@@ -99,8 +98,9 @@ public class SolverImpl implements Solver {
         System.out.println(colorReset);
     }
 
+
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 4");
+        Board board = Board.from("./src/main/resources/Levels/Level 3");
         SolverImpl solver = new SolverImpl(board, DFS);
 
         long start = System.currentTimeMillis();
