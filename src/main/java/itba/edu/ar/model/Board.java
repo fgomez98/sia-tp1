@@ -208,10 +208,6 @@ public class Board {
         return State.from(boxesInitial, playerInitial);
     }
 
-    public Set<Coordinate> getGoals() {
-        return goals;
-    }
-
     public String print(State state) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rows; i++) {

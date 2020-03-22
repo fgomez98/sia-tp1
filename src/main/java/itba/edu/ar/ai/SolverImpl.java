@@ -106,11 +106,11 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 10");
+        Board board = Board.from("./src/main/resources/Levels/Level 1");
 
         System.out.println(board.print(board.getInitialState()));
 
-        SolverImpl solver = new SolverImpl(board, IDDFS, new MyHeutistic());
+        SolverImpl solver = new SolverImpl(board, IDDFS, null);
 
         long start = System.currentTimeMillis();
 
