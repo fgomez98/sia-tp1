@@ -1,82 +1,89 @@
 package itba.edu.ar.ai;
 
-import itba.edu.ar.api.SearchAlgorithm;
-import itba.edu.ar.api.Solver;
-import itba.edu.ar.api.Storage;
+import itba.edu.ar.ai.heuristics.MyHeutistic;
+import itba.edu.ar.api.*;
 import itba.edu.ar.model.Board;
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 
-import java.util.*;
-
-import static itba.edu.ar.api.SearchAlgorithm.BFS;
-import static itba.edu.ar.api.SearchAlgorithm.DFS;
+import static itba.edu.ar.api.SearchAlgorithm.*;
 
 public class SolverImpl implements Solver {
 
     private static long nodes = 0;
-    private static long explodedNodes = 0;
     private Board board;
-    private Node root;
     private Storage frontier;
-    private Set<State> explored;
+    private SearchAlgorithm algorithm;
+    private Heuristic heuristic;
 
-    public SolverImpl(Board board, SearchAlgorithm algorithm) {
+    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristic heuristic) {
         this.board = board;
         this.frontier = algorithm.getStorage();
-        this.explored = new HashSet<>();
+        this.algorithm = algorithm;
+        this.heuristic = heuristic;
     }
 
-    /*
-        Por como esta es valido para los metodos no informados
-     */
     @Override
     public void solve() {
-        root = new Node(board.getInitialState(), 0, null);
+        Node root = new Node.Builder(board.getInitialState()).build();
         frontier.add(root);
 
         while (!frontier.isEmpty()) {
+            /* Quitamos un nodo de la frontera */
             Node node = frontier.get();
-//            printSolution(node, board, false);
-            explored.add(node.getState()); /* Lo marcamos como visto */
+
+
+            /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
                 System.out.println("Solution");
                 printSolution(node);
                 return;
             }
-            /* Explotamos el nodo y generamos sus hijos */
-            explode(node);
-        }
-    }
 
-    private void explode(Node node) {
-        for (Direction direction : board.getPosibleMovements(node.getState())) {
-            explodedNodes++;
-            State childState = board.move(node.getState(), direction);
-            Node child = new Node(childState, node.getMovements(), node.getDepth() + 1, node);
-            child.addMovement(direction);
-            if (!explored.contains(child.getState())) {
-                nodes++;
-                frontier.add(child);
+            /* Explotamos el nodo y generamos sus hijos */
+            if (algorithm == IDDFS || algorithm == IDA_STAR) {
+                if (node.getDepth() < ((IDStorage)frontier).getLimit()) {
+                    explode(node);
+                }
+                /* Si estamos en IDDFS y la frontera esta vacia incrementamos el limite y hacemos reset */
+                if (frontier.isEmpty()) {
+                    ((IDStorage) frontier).deepend();
+                }
             } else {
-//                printSolution(child, board, true);
+                explode(node);
             }
         }
     }
 
-
     /*
-
-    private boolean hasCicle(Node parent, Node node) {
-        if (parent == null) {
-             llegamos al root del arbol
-            return false;
-        }
-        return parent.hashCode() == node.hashCode() || hasCicle(parent.getParent(), node);
-    }
-
+        Cualquier otro
+        No regresar al estado padre.
+        No crear rutas que tengan ciclos.
+        No volver a expandir estados ya expandidos previamente.
+        Al marcar los nodos ya explorados (visitados), aseguramos que no se regresasra al esto padre,
+        ya que el padre ya fue visitado y que no se generen ciclos dado que nunca se explora a un mismo estado
     */
-
+    /*
+        IDD
+        Explotamos siempre que estemos por debajo de la maxima profundidad
+        No regresar al estado padre.
+        No crear rutas que tengan ciclos.
+        No volver a expandir estados ya expandidos previamente. Si existe una solución a profundidad N, podemos no encontrarla.
+        Es conveniente expandir los nodos explorados antes, siempre evitando que se formen ciclos o regresar al estado padre.
+        Caso padre, es facil fijarse con el nodo que este arriba.
+        Caso ciclos, no queda otra que revisar la branch
+    */
+    private void explode(Node node) {
+        for (Direction direction : board.getPosibleMovements(node.getState())) {
+            State childState = board.move(node.getState(), direction);
+            Node.Builder child = new Node.Builder(childState).withParent(node).withMovement(direction);
+            if (heuristic != null) {
+                child = child.withEvaluation(heuristic.evaluate(board, childState)).withCost(Cost.getCost(childState));
+            }
+            nodes++;
+            frontier.add(child.build());
+        }
+    }
 
     private void printSolution(Node node) {
         node.getMovements().forEach(m -> System.out.print(m.name() + ", "));
@@ -98,18 +105,19 @@ public class SolverImpl implements Solver {
         System.out.println(colorReset);
     }
 
-
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 3");
-        SolverImpl solver = new SolverImpl(board, DFS);
+        Board board = Board.from("./src/main/resources/Levels/Level 1");
+
+        System.out.println(board.print(board.getInitialState()));
+
+        SolverImpl solver = new SolverImpl(board, IDDFS, null);
 
         long start = System.currentTimeMillis();
 
         solver.solve();
 
-        System.out.println("exploted:" + explodedNodes);
         System.out.println("nodes:" + nodes);
         System.out.println("time:" + (System.currentTimeMillis() - start));
-
     }
+
 }

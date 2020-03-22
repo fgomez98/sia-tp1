@@ -1,12 +1,11 @@
 package itba.edu.ar.ai;
 
-
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 
 import java.util.Queue;
 
-public class InformedNode extends Node{
+public class InformedNode extends Node {
 
     private int evaluation;
 

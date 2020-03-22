@@ -1,17 +1,19 @@
-package itba.edu.ar.ai;
+package itba.edu.ar.ai.storage;
 
-
+import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.Storage;
+import itba.edu.ar.model.State;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class BFSStorage implements Storage {
 
     private Queue<Node> queue;
+    private Set<State> explored;
 
     private BFSStorage() {
         queue = new LinkedList<>();
+        explored = new HashSet<>();
     }
 
     public static BFSStorage getStorage() {
@@ -20,12 +22,16 @@ public class BFSStorage implements Storage {
 
     @Override
     public void add(Node node) {
-        queue.add(node);
+        if (!explored.contains(node.getState())) {
+            queue.add(node);
+        }
     }
 
     @Override
     public Node get() {
-        return queue.poll();
+        Node node = queue.poll();
+        explored.add(node.getState());
+        return node;
     }
 
     @Override
