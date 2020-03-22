@@ -1,8 +1,9 @@
 package itba.edu.ar.api;
 
-import itba.edu.ar.ai.BFSStorage;
-import itba.edu.ar.ai.DFSStorage;
-import itba.edu.ar.ai.HPAGreedy;
+import itba.edu.ar.ai.storage.BFSStorage;
+import itba.edu.ar.ai.storage.DFSStorage;
+import itba.edu.ar.ai.storage.HPAStorage;
+import itba.edu.ar.ai.storage.IDDFSStorage;
 
 public enum SearchAlgorithm {
 
@@ -21,13 +22,23 @@ public enum SearchAlgorithm {
     GLOBAL_GREEDY {
         @Override
         public Storage getStorage() {
-            return HPAGreedy.getStorage(1);
+            return HPAStorage.getStorage(1);
         }
     },
     A_STAR {
         @Override
         public Storage getStorage() {
-            return HPAGreedy.getStorage(0.5);
+            return HPAStorage.getStorage(0.5);
+        }
+    }, IDDFS {
+        @Override
+        public Storage getStorage() {
+            return IDDFSStorage.getStorage();
+        }
+    }, IDA_STAR {
+        @Override
+        public Storage getStorage() {
+            return IDDFSStorage.getStorage();
         }
     };
 

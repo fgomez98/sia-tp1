@@ -2,7 +2,6 @@ package itba.edu.ar.ai;
 
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -10,7 +9,9 @@ public class Node {
 
     private State state;
     private Queue<Direction> movements;
-    private final int depth;
+    private int depth;
+    private int eval;
+    private int cost;
 
     public Node(State state, Queue<Direction> movements, int depth, Node parent) {
         this(state, depth, parent);
@@ -27,16 +28,20 @@ public class Node {
         return movements;
     }
 
-    public void addMovement(Direction direction) {
-        this.movements.offer(direction);
-    }
-
     public int getDepth() {
         return depth;
     }
 
     public State getState() {
         return state;
+    }
+
+    public int getEval() {
+        return eval;
+    }
+
+    public int getCost() {
+        return cost;
     }
 
     @Override
@@ -97,4 +102,52 @@ public class Node {
             return result;
         }
     }
+
+    public static class Builder {
+        private State state;
+        private int depth;
+        private Queue<Direction> movements;
+        private int eval;
+        private int cost;
+
+        public Builder(State state) {
+            this.state = state;
+            this.depth = 0;
+            this.movements = new LinkedList<>();
+        }
+
+        public Builder withParent(Node parent) {
+            this.depth = parent.getDepth() + 1;
+            this.movements = new LinkedList<>(parent.getMovements());
+            return this;
+        }
+
+        public Builder withMovement(Direction direction) {
+            this.movements.offer(direction);
+            return this;
+        }
+
+        public Builder withEvaluation(int eval) {
+            this.eval = eval;
+            return this;
+        }
+
+        public Builder withCost(int eval) {
+            this.eval = eval;
+            return this;
+        }
+
+        public Node build() {
+            return new Node(this);
+        }
+    }
+
+    private Node(Builder builder) {
+        this.state = builder.state;
+        this.movements = builder.movements;
+        this.depth = builder.depth;
+        this.eval = builder.eval;
+        this.cost = builder.cost;
+    }
+
 }
