@@ -1,8 +1,5 @@
-row
-cols
-\n
-level
-use # -> wall
-    . objective
-    $ box
-    @ me	
+# -> wall
+. -> objective
+$ -> box
+* -> box over an objective tile
+@ -> me

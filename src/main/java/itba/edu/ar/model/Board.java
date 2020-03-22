@@ -74,6 +74,10 @@ public class Board {
             case WALL:
                 walls.add(Coordinate.from(x, y));
                 break;
+            case GOAL_BOX:
+                boxesInitial.add(Coordinate.from(x, y));
+                goals.add(Coordinate.from(x, y));
+                break;
             default:
                 break;
         }
@@ -212,6 +216,10 @@ public class Board {
                 if (walls.contains(coord)) {
                     sb.append(WALL.toString());
                 } else if (state.getBoxes().contains(coord)) {
+                    if (goals.contains(coord)) {
+                        sb.append(GOAL_BOX.toString());
+                        continue;
+                    }
                     sb.append(BOX.toString());
                 } else if (state.getPlayer().equals(coord)) {
                     sb.append(PLAYER.toString());
