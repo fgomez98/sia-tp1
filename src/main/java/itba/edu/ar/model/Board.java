@@ -242,6 +242,14 @@ public class Board {
         return sb.toString();
     }
 
+    public Set<Coordinate> getGoals() {
+        return goals;
+    }
+
+    public Set<Coordinate> getWalls() {
+        return walls;
+    }
+
     @Override
     public String toString() {
         return print(getInitialState());
