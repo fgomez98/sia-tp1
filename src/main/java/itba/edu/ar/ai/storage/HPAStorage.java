@@ -1,7 +1,6 @@
 package itba.edu.ar.ai.storage;
 
 import itba.edu.ar.api.Cost;
-import itba.edu.ar.ai.InformedNode;
 import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.State;
@@ -30,7 +29,7 @@ public class HPAStorage implements Storage {
     }
 
     private double fn(Node node, double w) {
-        return (1 - w) * Cost.getCost(node) + w * ((InformedNode) node).getEvaluation();
+        return (1 - w) * node.getCost() + w * node.getEval();
     }
 
     public static HPAStorage getStorage(double w) {

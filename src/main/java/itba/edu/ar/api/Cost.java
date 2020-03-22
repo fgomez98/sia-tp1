@@ -1,10 +1,10 @@
 package itba.edu.ar.api;
 
-import itba.edu.ar.ai.Node;
+import itba.edu.ar.model.State;
 
 public interface Cost {
 
-    static int getCost(Node node) {
+    static int getCost(State state) {
         return 1;
     }
 }

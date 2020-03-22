@@ -1,5 +1,6 @@
 package itba.edu.ar.ai;
 
+import itba.edu.ar.ai.heuristics.MyHeutistic;
 import itba.edu.ar.api.*;
 import itba.edu.ar.model.Board;
 import itba.edu.ar.model.Direction;
@@ -30,6 +31,7 @@ public class SolverImpl implements Solver {
         while (!frontier.isEmpty()) {
             /* Quitamos un nodo de la frontera */
             Node node = frontier.get();
+
 
             /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
@@ -76,7 +78,7 @@ public class SolverImpl implements Solver {
             State childState = board.move(node.getState(), direction);
             Node.Builder child = new Node.Builder(childState).withParent(node).withMovement(direction);
             if (heuristic != null) {
-                child = child.withEvaluation(heuristic.evaluate(board, childState));
+                child = child.withEvaluation(heuristic.evaluate(board, childState)).withCost(Cost.getCost(childState));
             }
             nodes++;
             frontier.add(child.build());
@@ -108,7 +110,7 @@ public class SolverImpl implements Solver {
 
         System.out.println(board.print(board.getInitialState()));
 
-        SolverImpl solver = new SolverImpl(board, IDDFS, null);
+        SolverImpl solver = new SolverImpl(board, IDDFS, new MyHeutistic());
 
         long start = System.currentTimeMillis();
 
