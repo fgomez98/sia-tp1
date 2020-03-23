@@ -1,6 +1,5 @@
 package itba.edu.ar.ai;
 
-import itba.edu.ar.ai.heuristics.MyHeutistic;
 import itba.edu.ar.api.*;
 import itba.edu.ar.model.Board;
 import itba.edu.ar.model.Direction;
@@ -42,7 +41,7 @@ public class SolverImpl implements Solver {
 
             /* Explotamos el nodo y generamos sus hijos */
             if (algorithm == IDDFS || algorithm == IDA_STAR) {
-                if (node.getDepth() < ((IDStorage)frontier).getLimit()) {
+                if (node.getDepth() < ((IDStorage) frontier).getLimit()) {
                     explode(node);
                 }
                 /* Si estamos en IDDFS y la frontera esta vacia incrementamos el limite y hacemos reset */
@@ -76,9 +75,12 @@ public class SolverImpl implements Solver {
     private void explode(Node node) {
         for (Direction direction : board.getPosibleMovements(node.getState())) {
             State childState = board.move(node.getState(), direction);
-            Node.Builder child = new Node.Builder(childState).withParent(node).withMovement(direction);
+            Node.Builder child = new Node.Builder(childState)
+                    .withParent(node)
+                    .withMovement(direction)
+                    .withCost(node.getCost() + Cost.getCost(childState));
             if (heuristic != null) {
-                child = child.withEvaluation(heuristic.evaluate(board, childState)).withCost(Cost.getCost(childState));
+                child = child.withEvaluation(heuristic.evaluate(board, childState));
             }
             nodes++;
             frontier.add(child.build());

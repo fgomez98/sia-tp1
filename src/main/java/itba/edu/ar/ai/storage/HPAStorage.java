@@ -1,6 +1,5 @@
 package itba.edu.ar.ai.storage;
 
-import itba.edu.ar.api.Cost;
 import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.State;
@@ -18,7 +17,7 @@ public class HPAStorage implements Storage {
 
     /*
         TODO: Si ya lo explore al nodo y con menor costo no agregar a la frontera
-        TODO: Si dos nodos tienen mismo f(n), elegir el nodo con menor h(n). -> la funcion de costo es cte
+        TODO: Si dos nodos tienen mismo f(n), elegir el nodo con menor h(n).
      */
 
     private HPAStorage(double w) {
