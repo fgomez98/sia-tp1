@@ -66,7 +66,7 @@ public class IDDFSStorage implements Storage, IDStorage {
 
     @Override
     public int deepend() {
-        limit += 5;
+        limit++;
         primaryStack = secondaryStack;
         secondaryStack = new Stack<>();
         return limit;

@@ -35,7 +35,6 @@ public class SolverImpl implements Solver {
             /* Quitamos un nodo de la frontera */
             Node node = frontier.get();
 
-
             /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
                 System.out.println("Solution");
@@ -112,7 +111,7 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 7");
+        Board board = Board.from("./src/main/resources/Levels/Level 1");
 
         System.out.println(board.print(board.getInitialState()));
 
