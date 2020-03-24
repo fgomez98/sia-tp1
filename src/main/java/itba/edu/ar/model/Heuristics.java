@@ -44,7 +44,6 @@ public class Heuristics {
         Set<Coordinate> passedPlaces = new HashSet<>();
         while(!queue.isEmpty()){
             queue.poll();
-            
         }
 
     }

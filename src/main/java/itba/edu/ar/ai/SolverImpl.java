@@ -81,7 +81,7 @@ public class SolverImpl implements Solver {
                     .withMovement(direction)
                     .withCost(node.getCost() + Cost.getCost(childState));
             if (heuristic != null) {
-                child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState)).withCost(Cost.getCost(childState));
+                child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState));
 
             }
             nodes++;
