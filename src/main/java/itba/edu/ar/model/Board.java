@@ -94,9 +94,9 @@ public class Board {
             }
         }
         // can not reach goal
-//        for (Coordinate coord : goals) {
-//            pullFromGoalDeadLock(coord);
-//        }
+        for (Coordinate coord : goals) {
+            pullFromGoalDeadLock(coord);
+        }
     }
 
     private boolean isCorner(Coordinate coord) {
@@ -121,9 +121,12 @@ public class Board {
             while (inBounds(box)) {
                 Coordinate player = coord.move(i + 2, d);
                 if (!inBounds(player) || (walls.contains(box) || walls.contains(player))) {
-                    deadBoxes.add(box);
+                    if (!goals.contains(box)) {
+                        deadBoxes.add(box);
+                    }
                     break;
                 }
+                deadBoxes.remove(box);
                 i++;
                 box = coord.move(i + 1, d);
             }
@@ -209,12 +212,18 @@ public class Board {
     }
 
     public String print(State state) {
+        return print(state, false);
+    }
+
+    private String print(State state, boolean withdeadBoxes) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Coordinate coord = Coordinate.from(i, j);
                 if (walls.contains(coord)) {
                     sb.append(WALL.toString());
+                } else if (deadBoxes.contains(coord)) {
+                    sb.append("X");
                 } else if (state.getBoxes().contains(coord)) {
                     if (goals.contains(coord)) {
                         sb.append(GOAL_BOX.toString());
@@ -235,19 +244,7 @@ public class Board {
     }
 
     public String printDeadBoxes() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                Coordinate coord = Coordinate.from(i, j);
-                if (deadBoxes.contains(coord)) {
-                    sb.append("X");
-                } else {
-                    sb.append(TILE.toString());
-                }
-            }
-            sb.append('\n');
-        }
-        return sb.toString();
+        return print(getInitialState(), true);
     }
 
     @Override
