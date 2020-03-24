@@ -1,9 +1,9 @@
 package itba.edu.ar.ai;
 
-import itba.edu.ar.ai.heuristics.MyHeutistic;
 import itba.edu.ar.api.*;
 import itba.edu.ar.model.Board;
 import itba.edu.ar.model.Direction;
+import itba.edu.ar.model.Heuristics;
 import itba.edu.ar.model.State;
 
 import static itba.edu.ar.api.SearchAlgorithm.*;
@@ -14,9 +14,9 @@ public class SolverImpl implements Solver {
     private Board board;
     private Storage frontier;
     private SearchAlgorithm algorithm;
-    private Heuristic heuristic;
+    private Heuristics heuristic;
 
-    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristic heuristic) {
+    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic) {
         this.board = board;
         this.frontier = algorithm.getStorage();
         this.algorithm = algorithm;
@@ -78,7 +78,7 @@ public class SolverImpl implements Solver {
             State childState = board.move(node.getState(), direction);
             Node.Builder child = new Node.Builder(childState).withParent(node).withMovement(direction);
             if (heuristic != null) {
-                child = child.withEvaluation(heuristic.evaluate(board, childState)).withCost(Cost.getCost(childState));
+                child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState)).withCost(Cost.getCost(childState));
             }
             nodes++;
             frontier.add(child.build());

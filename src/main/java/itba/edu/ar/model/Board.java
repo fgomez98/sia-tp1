@@ -258,6 +258,14 @@ public class Board {
         return walls;
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
     @Override
     public String toString() {
         return print(getInitialState());
