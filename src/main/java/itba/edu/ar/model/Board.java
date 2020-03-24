@@ -247,6 +247,22 @@ public class Board {
         return print(getInitialState(), true);
     }
 
+    public Set<Coordinate> getGoals() {
+        return goals;
+    }
+
+    public Set<Coordinate> getWalls() {
+        return walls;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
     @Override
     public String toString() {
         return print(getInitialState());
