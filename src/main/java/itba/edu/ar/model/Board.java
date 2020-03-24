@@ -222,7 +222,7 @@ public class Board {
                 Coordinate coord = Coordinate.from(i, j);
                 if (walls.contains(coord)) {
                     sb.append(WALL.toString());
-                } else if (deadBoxes.contains(coord)) {
+                } else if (withdeadBoxes && deadBoxes.contains(coord)) {
                     sb.append("X");
                 } else if (state.getBoxes().contains(coord)) {
                     if (goals.contains(coord)) {
