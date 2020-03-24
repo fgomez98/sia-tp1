@@ -10,32 +10,24 @@ public class Heuristics {
     private BiFunction<Board,State, Integer> evaluate;
     private Map<Set<Coordinate>,Integer> pointsMap;
 
-    private Heuristics(int heuristicNumber){
+    public Heuristics(Board board, int heuristicNumber){
         if(heuristicNumber == 0){
             evaluate = this::evaluateBoxGoal;
         }else if (heuristicNumber == 1){
             evaluate = this::evaluatePerson;
         }else{
             evaluate = this::evaluatePositionPoints;
-        }
-    }
 
-    public Heuristics from(Board board, int heuristicNumber){
-        Heuristics heuristic = new Heuristics(heuristicNumber);
-        Map<Coordinate,Map<Coordinate,Integer>> matrix= new HashMap<>();
-        pointsMap = new HashMap<>();
+            Map<Coordinate,Map<Coordinate,Integer>> matrix= new HashMap<>();
+            pointsMap = new HashMap<>();
 
+            for (Coordinate goal: board.getGoals()) {
+                matrix.put(goal, new HashMap<>());
+            }
 
-        for (Coordinate goal: board.getGoals()) {
-            matrix.put(goal, new HashMap<>());
-        }
-
-        if(heuristicNumber != 0 && heuristicNumber != 1) {
             calculateDistances(board,matrix);
             calculateBestDistances(board,matrix);
         }
-
-        return this;
     }
 
     private void calculateBestDistances(Board board,Map<Coordinate, Map<Coordinate, Integer>> goalBoxPoints) {
@@ -44,10 +36,19 @@ public class Heuristics {
         Set<Coordinate> passedPlaces = new HashSet<>();
         while(!queue.isEmpty()){
             queue.poll();
+
         }
 
     }
 
+
+
+    /**
+     * Para cada goal, hago el puntaje(distancia minima sin atravesar
+     * paredes) de cada posicion y lo guardo en la matriz.
+     * @param board tablero de entrada
+     * @param matrix matriz vacia en que guardo los punta
+     */
     private void calculateDistances(Board board,Map<Coordinate,Map<Coordinate,Integer>> matrix) {
         int rows = board.getRows();
         int columns = board.getCols();
@@ -75,20 +76,48 @@ public class Heuristics {
         }
     }
 
-
+    /**
+     * No Admisible. Hago la distancia tipo Manhattan entre las cajas y el objetivo
+     * @param board
+     * @param state
+     * @return valor de la heuristica
+     */
     private int evaluateBoxGoal(Board board, State state) {
-        int minDistanceSum = Integer.MAX_VALUE;
+        int ret = 0;
+
         for (Coordinate box : state.getBoxes()) {
-            int sum = 0;
+
+            int minDistanceSum = Integer.MAX_VALUE;
+
             for (Coordinate goal : board.getGoals()) {
+                int sum = 0;
                 sum += Math.abs(goal.getX() - box.getX());
                 sum += Math.abs(goal.getY() - box.getY());
+                minDistanceSum = Math.min(sum, minDistanceSum);
             }
-            minDistanceSum = Math.min(sum, minDistanceSum);
+            ret += minDistanceSum;
+
         }
-        return minDistanceSum;
+        return ret;
     }
 
+//    private Set<Coordinate> evaluateBoxGoal(Set<Set<Coordinate>> boxPermuts, Set<Coordinate> boxes,Queue<Coordinate> goals){
+//        if(boxes.size() == goals.size()){
+//            return boxes;
+//        }
+//        for (int i = 0; i < goals.size(); i++) {
+//            Coordinate coord = goals.
+//            boxes.add();
+//        }
+//    }
+
+    /**
+     * Admisible
+     * Con el puntaje de cada posicion, doy el puntaje de la permutacion de cajas
+     * @param board
+     * @param state
+     * @return valor de la heuristica
+     */
     private int evaluatePositionPoints(Board board, State state) {
         return pointsMap.get(state.getBoxes());
     }
@@ -97,7 +126,7 @@ public class Heuristics {
      * No admisible
      * @param board
      * @param state
-     * @return
+     * @return valor de la heuristica
      */
     private int evaluatePerson(Board board, State state) {
         int personBoxesDistance = 0;
