@@ -132,8 +132,8 @@ public class Node {
             return this;
         }
 
-        public Builder withCost(int eval) {
-            this.eval = eval;
+        public Builder withCost(int cost) {
+            this.cost = cost;
             return this;
         }
 

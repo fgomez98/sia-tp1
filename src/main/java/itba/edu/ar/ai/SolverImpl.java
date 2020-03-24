@@ -25,13 +25,15 @@ public class SolverImpl implements Solver {
 
     @Override
     public void solve() {
-        Node root = new Node.Builder(board.getInitialState()).build();
-        frontier.add(root);
+        Node.Builder root = new Node.Builder(board.getInitialState()).withCost(0);
+        if (heuristic != null) {
+            root = root.withEvaluation(heuristic.getEvaluate().apply(board, board.getInitialState()));
+        }
+        frontier.add(root.build());
 
         while (!frontier.isEmpty()) {
             /* Quitamos un nodo de la frontera */
             Node node = frontier.get();
-
 
             /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
@@ -81,8 +83,7 @@ public class SolverImpl implements Solver {
                     .withMovement(direction)
                     .withCost(node.getCost() + Cost.getCost(childState));
             if (heuristic != null) {
-                child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState)).withCost(Cost.getCost(childState));
-
+                child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState));
             }
             nodes++;
             frontier.add(child.build());

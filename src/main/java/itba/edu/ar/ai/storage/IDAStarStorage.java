@@ -10,6 +10,7 @@ public class IDAStarStorage extends IDDFSStorage implements Storage, IDStorage {
 
     private IDAStarStorage() {
         super();
+        nextLimit = -1;
     }
 
     public static IDAStarStorage getStorage() {

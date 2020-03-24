@@ -38,19 +38,17 @@ public class HPAStorage implements Storage {
     @Override
     public Node get() {
         Node node = priorityQueue.poll();
-        explored.put(node.getState(), Function.from(node.getEval(), fn(node, w)));
+        explored.put(node.getState(), new Function(node.getEval(), fn(node, w)));
         return node;
     }
 
     @Override
     public void add(Node node) {
         if (explored.containsKey(node.getState())) {
-            if (explored.get(node.getState()).getFnEvaluation() < fn(node, w)) {
+            double a = explored.get(node.getState()).getFnEvaluation();
+            double b = fn(node, w);
+            if (a < b || (a == b && explored.get(node.getState()).getHeuristic() < node.getEval())) {
                 return;
-            } else if (explored.get(node.getState()).getFnEvaluation() == fn(node, w)) {
-                if (explored.get(node.getState()).getHeuristic() < node.getEval()) {
-                    return;
-                }
             }
         }
         priorityQueue.offer(node);
