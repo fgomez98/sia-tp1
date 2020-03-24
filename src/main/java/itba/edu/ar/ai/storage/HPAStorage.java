@@ -12,12 +12,12 @@ import java.util.PriorityQueue;
 public class HPAStorage implements Storage {
 
     private PriorityQueue<Node> priorityQueue;
-    private Map<State, Double> explored;
+    private Map<State, Function> explored;
     private double w;
 
     /*
-        TODO: Si ya lo explore al nodo y con menor costo no agregar a la frontera
-        TODO: Si dos nodos tienen mismo f(n), elegir el nodo con menor h(n).
+        Si ya lo explore al nodo y con menor costo no agregar a la frontera
+        Si dos nodos tienen mismo f(n), elegir el nodo con menor h(n).
      */
 
     private HPAStorage(double w) {
@@ -38,21 +38,49 @@ public class HPAStorage implements Storage {
     @Override
     public Node get() {
         Node node = priorityQueue.poll();
-        explored.put(node.getState(), fn(node, w));
+        explored.put(node.getState(), Function.from(node.getEval(), fn(node, w)));
         return node;
     }
 
     @Override
     public void add(Node node) {
-        if (explored.containsKey(node.getState()) && explored.get(node.getState()) <= fn(node, w)) {
-            return;
+        if (explored.containsKey(node.getState())) {
+            if (explored.get(node.getState()).getFnEvaluation() < fn(node, w)) {
+                return;
+            } else if (explored.get(node.getState()).getFnEvaluation() == fn(node, w)) {
+                if (explored.get(node.getState()).getHeuristic() < node.getEval()) {
+                    return;
+                }
+            }
         }
         priorityQueue.offer(node);
-
     }
 
     @Override
     public boolean isEmpty() {
         return false;
+    }
+
+    private static class Function {
+
+        private double heuristic;
+        private double fnEvaluation;
+
+        private Function(double heuristic, double fnEvaluation) {
+            this.fnEvaluation = fnEvaluation;
+            this.heuristic = heuristic;
+        }
+
+        public static Function from(double heuristic, double fnEvaluation) {
+            return new Function(heuristic, fnEvaluation);
+        }
+
+        public double getHeuristic() {
+            return heuristic;
+        }
+
+        public double getFnEvaluation() {
+            return fnEvaluation;
+        }
     }
 }
