@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
 public class HPAStorage implements Storage {
 
     private PriorityQueue<Node> priorityQueue;
-    private Map<State, Function> explored;
+    private Map<State, Node> explored;
     private double w;
 
     /*
@@ -38,17 +38,19 @@ public class HPAStorage implements Storage {
     @Override
     public Node get() {
         Node node = priorityQueue.poll();
-        explored.put(node.getState(), Function.from(node.getEval(), fn(node, w)));
+        explored.put(node.getState(), node);
         return node;
     }
 
     @Override
     public void add(Node node) {
         if (explored.containsKey(node.getState())) {
-            if (explored.get(node.getState()).getFnEvaluation() < fn(node, w)) {
+            double a = fn(explored.get(node.getState()), w);
+            double b = fn(node, w);
+            if (a < b) {
                 return;
-            } else if (explored.get(node.getState()).getFnEvaluation() == fn(node, w)) {
-                if (explored.get(node.getState()).getHeuristic() < node.getEval()) {
+            } else if (a == b) {
+                if (explored.get(node.getState()).getEval() < node.getEval()) {
                     return;
                 }
             }

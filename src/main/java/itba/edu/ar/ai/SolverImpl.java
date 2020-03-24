@@ -25,8 +25,11 @@ public class SolverImpl implements Solver {
 
     @Override
     public void solve() {
-        Node root = new Node.Builder(board.getInitialState()).build();
-        frontier.add(root);
+        Node.Builder root = new Node.Builder(board.getInitialState()).withCost(0);
+        if (heuristic != null) {
+            root = root.withEvaluation(heuristic.getEvaluate().apply(board, board.getInitialState()));
+        }
+        frontier.add(root.build());
 
         while (!frontier.isEmpty()) {
             /* Quitamos un nodo de la frontera */
@@ -82,7 +85,6 @@ public class SolverImpl implements Solver {
                     .withCost(node.getCost() + Cost.getCost(childState));
             if (heuristic != null) {
                 child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState));
-
             }
             nodes++;
             frontier.add(child.build());
@@ -110,11 +112,11 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 3");
+        Board board = Board.from("./src/main/resources/Levels/Level 7");
 
         System.out.println(board.print(board.getInitialState()));
 
-        SolverImpl solver = new SolverImpl(board, IDDFS, null);
+        SolverImpl solver = new SolverImpl(board, A_STAR, new Heuristics(board, 0));
 
         long start = System.currentTimeMillis();
 
