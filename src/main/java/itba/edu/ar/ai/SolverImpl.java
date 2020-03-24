@@ -42,7 +42,7 @@ public class SolverImpl implements Solver {
 
             /* Explotamos el nodo y generamos sus hijos */
             if (algorithm == IDDFS || algorithm == IDA_STAR) {
-                if (node.getDepth() < ((IDStorage)frontier).getLimit()) {
+                if (node.getDepth() < ((IDStorage) frontier).getLimit()) {
                     explode(node);
                 }
                 /* Si estamos en IDDFS y la frontera esta vacia incrementamos el limite y hacemos reset */
@@ -76,9 +76,13 @@ public class SolverImpl implements Solver {
     private void explode(Node node) {
         for (Direction direction : board.getPosibleMovements(node.getState())) {
             State childState = board.move(node.getState(), direction);
-            Node.Builder child = new Node.Builder(childState).withParent(node).withMovement(direction);
+            Node.Builder child = new Node.Builder(childState)
+                    .withParent(node)
+                    .withMovement(direction)
+                    .withCost(node.getCost() + Cost.getCost(childState));
             if (heuristic != null) {
                 child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState)).withCost(Cost.getCost(childState));
+
             }
             nodes++;
             frontier.add(child.build());
