@@ -1,22 +1,38 @@
 package itba.edu.ar.model;
 
-
 import java.util.*;
 import java.util.function.BiFunction;
 
+public enum Heuristics {
 
-public class Heuristics {
+    MANHATTAM() {
+        @Override
+        public BiFunction<Board, State, Integer> getEvaluate() {
+            return Heuristics::evaluateManhattan;
+        }
+    }, MANHATTAM_OPT() {
+        @Override
+        public BiFunction<Board, State, Integer> getEvaluate() {
+            return Heuristics::evaluateManhattanOpt;
+        }
+    }, POINT_POSITION() {
+        @Override
+        public BiFunction<Board, State, Integer> getEvaluate() {
+            return Heuristics::evaluatePointPosition;
+        }
+    };
 
     private BiFunction<Board, State, Integer> evaluate;
 //    private Map<Set<Coordinate>, Integer> pointsMap; //box positions and point
 
-    public Heuristics(Board board, int heuristicNumber) {
-        if (heuristicNumber == 0) {
-            evaluate = this::evaluateManhattan;
-        } else if (heuristicNumber == 1) {
-            evaluate = this::evaluateManhattanOpt;
-        } else {
-            evaluate = this::evaluatePointPosition;
+
+//    public Heuristics(Board board, int heuristicNumber) {
+//        if (heuristicNumber == 0) {
+//            evaluate = this::evaluateManhattan;
+//        } else if (heuristicNumber == 1) {
+//            evaluate = this::evaluateManhattanOpt;
+//        } else {
+//            evaluate = this::evaluatePointPosition;
 
 //            Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
 //            pointsMap = new HashMap<>();
@@ -26,9 +42,9 @@ public class Heuristics {
 //            }
 //
 //            calculateDistances(board, matrix);
-            //calculateBestDistances(board, matrix);
-        }
-    }
+    //calculateBestDistances(board, matrix);
+//        }
+//    }
 
     /**
      * Para cada goal, hago el puntaje(distancia minima sin atravesar
@@ -72,7 +88,7 @@ public class Heuristics {
      * @param state
      * @return valor de la heuristica
      */
-    private int evaluateManhattan(Board board, State state) {
+    private static int evaluateManhattan(Board board, State state) {
         int ret = 0;
 
         for (Coordinate box : state.getBoxes()) {
@@ -97,11 +113,11 @@ public class Heuristics {
      * @param state
      * @return valor de la heuristica
      */
-    private int evaluatePointPosition(Board board, State state) {
+    private static int evaluatePointPosition(Board board, State state) {
 
         List<Coordinate> boxesList = new LinkedList<>(state.getBoxes());
         List<Coordinate> goalsList = new LinkedList<>(board.getGoals());
-        Map<Coordinate,Map<Coordinate,Integer>> boxPoints = board.getBoxGoalPoints();
+        Map<Coordinate, Map<Coordinate, Integer>> boxPoints = board.getBoxGoalPoints();
 
         int ret = Integer.MAX_VALUE;
         List<List<Integer>> combination = permutationsOfIntegers(boxesList);
@@ -111,8 +127,8 @@ public class Heuristics {
             for (int j = 0; j < boxesList.size(); j++) {
                 try {
                     sum += boxPoints.get(boxesList.get(j)).get(goalsList.get(integers.get(j)));
-                }catch(NullPointerException e){
-                    sum += Integer.MAX_VALUE/2;
+                } catch (NullPointerException e) {
+                    sum += Integer.MAX_VALUE / 2;
                 }
             }
             ret = Math.min(ret, sum);
@@ -129,7 +145,7 @@ public class Heuristics {
      * @param state
      * @return valor de la heuristica
      */
-    private int evaluateManhattanOpt(Board board, State state) {
+    private static int evaluateManhattanOpt(Board board, State state) {
 
         List<Coordinate> boxes = new ArrayList<>(state.getBoxes());
         List<Coordinate> goals = new ArrayList<>(board.getGoals());
@@ -147,7 +163,7 @@ public class Heuristics {
         return ret;
     }
 
-    private List<List<Integer>> permutationsOfIntegers(List<Coordinate> boxes){
+    private static List<List<Integer>> permutationsOfIntegers(List<Coordinate> boxes) {
         List<List<Integer>> combination = new LinkedList<>();
         List<Integer> numbers = new ArrayList<>();
         for (int i = 0; i < boxes.size(); i++) {
@@ -157,7 +173,7 @@ public class Heuristics {
         return combination;
     }
 
-    private void permutationsOfIntegers(List<List<Integer>> combination, List<Integer> inter, List<Integer> goals) {
+    private static void permutationsOfIntegers(List<List<Integer>> combination, List<Integer> inter, List<Integer> goals) {
         if (goals.isEmpty()) {
             combination.add(new ArrayList<>(inter));
             return;
@@ -172,14 +188,12 @@ public class Heuristics {
         }
     }
 
-    private Integer calculateManhattan(Coordinate boxes, Coordinate goals) {
+    private static Integer calculateManhattan(Coordinate boxes, Coordinate goals) {
         int sum = 0;
         sum += Math.abs(goals.getX() - boxes.getX());
         sum += Math.abs(goals.getY() - boxes.getY());
         return sum;
     }
 
-    public BiFunction<Board, State, Integer> getEvaluate() {
-        return evaluate;
-    }
+    public abstract BiFunction<Board, State, Integer> getEvaluate();
 }
