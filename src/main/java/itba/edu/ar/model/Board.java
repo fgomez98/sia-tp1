@@ -16,8 +16,7 @@ public class Board {
     private final Set<Coordinate> deadBoxes;
     private Set<Coordinate> boxesInitial;
     private Coordinate playerInitial;
-    private Map<Set<Coordinate>, Integer> pointsMap;
-    Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
+    private Map<Coordinate, Map<Coordinate, Integer>> boxGoalPoints = new HashMap<>();
 
     /*
         Se asume que los tableros son correctos y que siempre hay un jugador en los mismos
@@ -85,14 +84,18 @@ public class Board {
         }
     }
 
+    /**
+     * Para cada goal, hago el puntaje(distancia minima sin atravesar
+     * paredes) de cada posicion y lo guardo en una matriz que para cada caja, muestra el puntaje a cada goal.
+     * Agrego ademas a la lista de deadboxes a todas las posiciones que no llego
+     */
     public void analyseBoard() {
-        Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
 
         /* can not reach goal */
         Set<Coordinate> visited = new HashSet<>();
         for (Coordinate coord : goals) {
-            matrix.put(coord, new HashMap<>());
-            pullFromGoal(coord, visited, matrix);
+            //boxGoalPoints.put(coord, new HashMap<>());
+            pullFromGoal(coord, visited);
         }
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -121,10 +124,11 @@ public class Board {
         return false;
     }
 
-    private void pullFromGoal(Coordinate goal, Set<Coordinate> visited, Map<Coordinate, Map<Coordinate, Integer>> matrix) {
+    private void pullFromGoal(Coordinate goal, Set<Coordinate> visited) {
         Set<Coordinate> passedPlaces = new HashSet<>();
         Queue<Coordinate> queue = new LinkedList<>();
-        matrix.get(goal).put(goal, 0);
+        boxGoalPoints.computeIfAbsent(goal,k->new HashMap<>());
+        boxGoalPoints.get(goal).put(goal, 0);
         passedPlaces.add(goal);
         visited.add(goal);
         queue.add(goal);
@@ -137,8 +141,10 @@ public class Board {
                         && !walls.contains(boxPos) && !walls.contains(personPos)
                         && !passedPlaces.contains(boxPos)) {
                     passedPlaces.add(boxPos);
-                    int points = matrix.get(goal).get(position);
-                    matrix.get(goal).put(boxPos, points + 1);
+                    int points = boxGoalPoints.get(position).get(goal);
+                    boxGoalPoints.computeIfAbsent(boxPos, k -> new HashMap<>());
+                    boxGoalPoints.get(boxPos).put(goal,points+1);
+                    //boxGoalPoints.get(goal).put(boxPos, points + 1);
                     queue.offer(boxPos);
                     visited.add(boxPos);
                 }
@@ -274,6 +280,10 @@ public class Board {
 
     public int getCols() {
         return cols;
+    }
+
+    public Map<Coordinate, Map<Coordinate, Integer>> getBoxGoalPoints() {
+        return boxGoalPoints;
     }
 
     @Override

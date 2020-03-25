@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 public class Heuristics {
 
     private BiFunction<Board, State, Integer> evaluate;
-    private Map<Set<Coordinate>, Integer> pointsMap;
+//    private Map<Set<Coordinate>, Integer> pointsMap; //box positions and point
 
     public Heuristics(Board board, int heuristicNumber) {
         if (heuristicNumber == 0) {
@@ -18,52 +18,17 @@ public class Heuristics {
         } else {
             evaluate = this::evaluatePointPosition;
 
-            Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
-            pointsMap = new HashMap<>();
-
-            for (Coordinate goal : board.getGoals()) {
-                matrix.put(goal, new HashMap<>());
-            }
-
-            calculateDistances(board, matrix);
-            calculateBestDistances(board, matrix);
-        }
-    }
-    //calculo para cada una, la menor distancia de los goals
-//        Queue<Coordinate> goalQueue = new LinkedList<>(board.getGoals());
+//            Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
+//            pointsMap = new HashMap<>();
 //
-//        for (Set<Coordinate> position: allPositions) {
-//            List<Pair<Coordinate,Coordinate>> permutationsBoxGoal = new LinkedList<>();
-//            for (Coordinate box:position) {
-//                Coordinate goal = goalQueue.poll();
-//                permutationsBoxGoal.add(new Pair<>(box,goal));
-//                goalQueue.add(goal);
-//            }
-//            for (Pair<Coordinate,Coordinate> pair: permutationsBoxGoal) {
-//                Set<Coordinate> aux = new HashSet<>();
-//                Coordinate goal = pair.getValue();
-//                Coordinate box = pair.getKey();
-//                aux.add(box);
-//                aux.add(goal);
-//                int sum = 0;
-//                sum += Math.abs(goal.getX() - box.getX());
-//                sum += Math.abs(goal.getY() - box.getY());
+//            for (Coordinate goal : board.getGoals()) {
+//                matrix.put(goal, new HashMap<>());
 //            }
 //
-//        }
-
-
-    private void calculateBestDistances(Board board, Map<Coordinate, Map<Coordinate, Integer>> goalBoxPoints) {
-        State initialState = board.getInitialState();
-        Queue<Coordinate> queue = new LinkedList<>(board.getGoals());
-        Set<Coordinate> passedPlaces = new HashSet<>();
-        while (!queue.isEmpty()) {
-            queue.poll();
-
+//            calculateDistances(board, matrix);
+            //calculateBestDistances(board, matrix);
         }
-
     }
-
 
     /**
      * Para cada goal, hago el puntaje(distancia minima sin atravesar
@@ -72,7 +37,7 @@ public class Heuristics {
      * @param board  tablero de entrada
      * @param matrix matriz vacia en que guardo los punta
      */
-    private void calculateDistances(Board board, Map<Coordinate, Map<Coordinate, Integer>> matrix) {
+   /* private void calculateDistances(Board board, Map<Coordinate, Map<Coordinate, Integer>> matrix) {
         int rows = board.getRows();
         int columns = board.getCols();
 
@@ -93,11 +58,12 @@ public class Heuristics {
                         passedPlaces.add(boxPos);
                         int points = matrix.get(goal).get(position);
                         matrix.get(goal).put(boxPos, points + 1);
+                        queue.add(boxPos);
                     }
                 }
             }
         }
-    }
+    }*/
 
     /**
      * No Admisible. Hago la distancia tipo Manhattan entre las cajas y el objetivo mas cercano
@@ -132,7 +98,28 @@ public class Heuristics {
      * @return valor de la heuristica
      */
     private int evaluatePointPosition(Board board, State state) {
-        return pointsMap.get(state.getBoxes());
+
+        List<Coordinate> boxesList = new LinkedList<>(state.getBoxes());
+        List<Coordinate> goalsList = new LinkedList<>(board.getGoals());
+        Map<Coordinate,Map<Coordinate,Integer>> boxPoints = board.getBoxGoalPoints();
+
+        int ret = Integer.MAX_VALUE;
+        List<List<Integer>> combination = permutationsOfIntegers(boxesList);
+
+        for (List<Integer> integers : combination) {
+            int sum = 0;
+            for (int j = 0; j < boxesList.size(); j++) {
+                try {
+                    sum += boxPoints.get(boxesList.get(j)).get(goalsList.get(integers.get(j)));
+                }catch(NullPointerException e){
+                    sum += Integer.MAX_VALUE/2;
+                }
+            }
+            ret = Math.min(ret, sum);
+        }
+
+
+        return ret;
     }
 
     /**
@@ -147,13 +134,9 @@ public class Heuristics {
         List<Coordinate> boxes = new ArrayList<>(state.getBoxes());
         List<Coordinate> goals = new ArrayList<>(board.getGoals());
 
-        List<List<Integer>> combination = new LinkedList<>();
-        List<Integer> numbers = new ArrayList<>();
-        for (int i = 0; i < boxes.size(); i++) {
-            numbers.add(i);
-        }
+        List<List<Integer>> combination = permutationsOfIntegers(boxes);
+
         int ret = Integer.MAX_VALUE;
-        permutationsOfIntegers(combination, new LinkedList<>(), numbers);
         for (List<Integer> integers : combination) {
             int sum = 0;
             for (int j = 0; j < boxes.size(); j++) {
@@ -162,6 +145,16 @@ public class Heuristics {
             ret = Math.min(ret, sum);
         }
         return ret;
+    }
+
+    private List<List<Integer>> permutationsOfIntegers(List<Coordinate> boxes){
+        List<List<Integer>> combination = new LinkedList<>();
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i < boxes.size(); i++) {
+            numbers.add(i);
+        }
+        permutationsOfIntegers(combination, new LinkedList<>(), numbers);
+        return combination;
     }
 
     private void permutationsOfIntegers(List<List<Integer>> combination, List<Integer> inter, List<Integer> goals) {
