@@ -16,6 +16,8 @@ public class Board {
     private final Set<Coordinate> deadBoxes;
     private Set<Coordinate> boxesInitial;
     private Coordinate playerInitial;
+    private Map<Set<Coordinate>, Integer> pointsMap;
+    Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
 
     /*
         Se asume que los tableros son correctos y que siempre hay un jugador en los mismos
@@ -56,7 +58,7 @@ public class Board {
         }
         board.rows = x;
         board.cols = yMax;
-        board.computeDeadBoxes();
+        board.analyseBoard();
         return board;
     }
 
@@ -83,58 +85,69 @@ public class Board {
         }
     }
 
-    public void computeDeadBoxes() {
-        // corners
+    public void analyseBoard() {
+        Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
+
+        /* can not reach goal */
+        Set<Coordinate> visited = new HashSet<>();
+        for (Coordinate coord : goals) {
+            matrix.put(coord, new HashMap<>());
+            pullFromGoal(coord, visited, matrix);
+        }
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Coordinate coord = Coordinate.from(i, j);
-                if (isCorner(coord)) {
+                if (isCorner(coord) || !visited.contains(coord)) {
+                    /* corners */
+                    /* every square not being marked as visited is a simple deadlock square */
                     deadBoxes.add(coord);
                 }
             }
         }
-//        // can not reach goal
-//        for (Coordinate coord : goals) {
-//            pullFromGoalDeadLock(coord);
-//        }
     }
 
     private boolean isCorner(Coordinate coord) {
         if (goals.contains(coord)) {
             return false;
-        } else if (walls.contains(coord.move(UP)) &&  walls.contains(coord.move(RIGHT))) { // Top Right Corner
+        } else if (walls.contains(coord.move(UP)) && walls.contains(coord.move(RIGHT))) { // Top Right Corner
             return true;
-        } else if (walls.contains(coord.move(UP)) &&  walls.contains(coord.move(LEFT))) { // Top Left Corner
+        } else if (walls.contains(coord.move(UP)) && walls.contains(coord.move(LEFT))) { // Top Left Corner
             return true;
-        } else if (walls.contains(coord.move(DOWN)) &&  walls.contains(coord.move(RIGHT))) { // Bottom Right Corner
+        } else if (walls.contains(coord.move(DOWN)) && walls.contains(coord.move(RIGHT))) { // Bottom Right Corner
             return true;
-        } else if (walls.contains(coord.move(DOWN)) &&  walls.contains(coord.move(LEFT))) { // Bottom Left Corner
+        } else if (walls.contains(coord.move(DOWN)) && walls.contains(coord.move(LEFT))) { // Bottom Left Corner
             return true;
         }
         return false;
     }
 
-    private void pullFromGoalDeadLock(Coordinate coord) {
-        for (Direction d : Direction.directions) {
-            int i = 0;
-            Coordinate box = coord.move(i + 1, d);
-            while (inBounds(box)) {
-                Coordinate player = coord.move(i + 2, d);
-                if (!inBounds(player) || (walls.contains(box) || walls.contains(player))) {
-                    if (!goals.contains(box)) {
-                        deadBoxes.add(box);
-                    }
-                    break;
+    private void pullFromGoal(Coordinate goal, Set<Coordinate> visited, Map<Coordinate, Map<Coordinate, Integer>> matrix) {
+        Set<Coordinate> passedPlaces = new HashSet<>();
+        Queue<Coordinate> queue = new LinkedList<>();
+        matrix.get(goal).put(goal, 0);
+        passedPlaces.add(goal);
+        visited.add(goal);
+        queue.add(goal);
+        while (!queue.isEmpty()) {
+            Coordinate position = queue.poll();
+            for (Direction d : directions) {
+                Coordinate boxPos = position.move(d);
+                Coordinate personPos = position.move(2, d);
+                if (inBounds(boxPos) && inBounds(personPos)
+                        && !walls.contains(boxPos) && !walls.contains(personPos)
+                        && !passedPlaces.contains(boxPos)) {
+                    passedPlaces.add(boxPos);
+                    int points = matrix.get(goal).get(position);
+                    matrix.get(goal).put(boxPos, points + 1);
+                    queue.offer(boxPos);
+                    visited.add(boxPos);
                 }
-                deadBoxes.remove(box);
-                i++;
-                box = coord.move(i + 1, d);
             }
         }
     }
 
     private boolean inBounds(Coordinate coord) {
-        return coord.getX() < rows && coord.getX() >= 0 && coord.getY() < cols && coord.getY()  >= 0;
+        return coord.getX() < rows && coord.getX() >= 0 && coord.getY() < cols && coord.getY() >= 0;
     }
 
     public boolean isComplete(State state) {
