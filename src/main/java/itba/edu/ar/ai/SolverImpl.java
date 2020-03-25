@@ -115,7 +115,7 @@ public class SolverImpl implements Solver {
 
         System.out.println(board.print(board.getInitialState()));
 
-        SolverImpl solver = new SolverImpl(board, IDA_STAR, new Heuristics(board,1));
+        SolverImpl solver = new SolverImpl(board, A_STAR, new Heuristics(board,0));
 
         long start = System.currentTimeMillis();
 

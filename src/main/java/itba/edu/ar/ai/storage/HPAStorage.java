@@ -4,7 +4,6 @@ import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.State;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -22,13 +21,20 @@ public class HPAStorage implements Storage {
 
     private HPAStorage(double w) {
         this.w = w;
-        Comparator<Node> comparator = (n1, n2) -> Double.compare(fn(n1, w), fn(n2, w));
-        priorityQueue = new PriorityQueue<>(comparator);
+        priorityQueue = new PriorityQueue<>(this::nodeCompare);
         explored = new HashMap<>();
     }
 
     private double fn(Node node, double w) {
         return (1 - w) * node.getCost() + w * node.getEval();
+    }
+
+    private int nodeCompare(Node a, Node b) {
+        int ret = Double.compare(fn(a, w), fn(b, w));
+        if (ret == 0) {
+            return a.getEval() - b.getEval();
+        }
+        return ret;
     }
 
     public static HPAStorage getStorage(double w) {
