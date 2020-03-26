@@ -5,12 +5,12 @@ import java.util.function.BiFunction;
 
 public enum Heuristics {
 
-    MANHATTAM() {
+    MANHATTAN() {
         @Override
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluateManhattan;
         }
-    }, MANHATTAM_OPT() {
+    }, MANHATTAN_OPT() {
         @Override
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluateManhattanOpt;
@@ -120,7 +120,7 @@ public enum Heuristics {
         Map<Coordinate, Map<Coordinate, Integer>> boxPoints = board.getBoxGoalPoints();
 
         int ret = Integer.MAX_VALUE;
-        List<List<Integer>> combination = permutationsOfIntegers(boxesList);
+        List<List<Integer>> combination = board.getCombination();
 
         for (List<Integer> integers : combination) {
             int sum = 0;
@@ -150,7 +150,7 @@ public enum Heuristics {
         List<Coordinate> boxes = new ArrayList<>(state.getBoxes());
         List<Coordinate> goals = new ArrayList<>(board.getGoals());
 
-        List<List<Integer>> combination = permutationsOfIntegers(boxes);
+        List<List<Integer>> combination = board.getCombination();
 
         int ret = Integer.MAX_VALUE;
         for (List<Integer> integers : combination) {
@@ -163,7 +163,7 @@ public enum Heuristics {
         return ret;
     }
 
-    private static List<List<Integer>> permutationsOfIntegers(List<Coordinate> boxes) {
+    /*private static List<List<Integer>> permutationsOfIntegers(List<Coordinate> boxes) {
         List<List<Integer>> combination = new LinkedList<>();
         List<Integer> numbers = new ArrayList<>();
         for (int i = 0; i < boxes.size(); i++) {
@@ -187,7 +187,7 @@ public enum Heuristics {
             inter.remove(goal);
         }
     }
-
+*/
     private static Integer calculateManhattan(Coordinate boxes, Coordinate goals) {
         int sum = 0;
         sum += Math.abs(goals.getX() - boxes.getX());
