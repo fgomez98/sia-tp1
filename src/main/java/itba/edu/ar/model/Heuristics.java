@@ -15,10 +15,15 @@ public enum Heuristics {
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluateManhattanOpt;
         }
-    }, POINT_POSITION() {
+    }, POINT_POSITION_OPT() {
         @Override
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluatePointPosition;
+        }
+    },POINT_POSITION(){
+        @Override
+        public BiFunction<Board, State, Integer> getEvaluate() {
+            return Heuristics::evaluatePointsNoPermutation;
         }
     };
 
@@ -98,6 +103,25 @@ public enum Heuristics {
             for (Coordinate goal : board.getGoals()) {
 
                 minDistanceSum = Math.min(calculateManhattan(goal, box), minDistanceSum);
+            }
+            ret += minDistanceSum;
+
+        }
+        return ret;
+    }
+
+    private static int evaluatePointsNoPermutation(Board board, State state) {
+        int ret = 0;
+
+        for (Coordinate box : state.getBoxes()) {
+
+            int minDistanceSum = Integer.MAX_VALUE;
+
+            for (Coordinate goal : board.getGoals()) {
+                try {
+                    minDistanceSum = Math.min(board.getBoxGoalPoints().get(box).get(goal), minDistanceSum);
+                }catch (NullPointerException ignored){
+                }
             }
             ret += minDistanceSum;
 

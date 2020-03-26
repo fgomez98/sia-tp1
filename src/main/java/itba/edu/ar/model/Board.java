@@ -155,6 +155,7 @@ public class Board {
                     boxGoalPoints.get(boxPos).put(goal,points+1);
                     //boxGoalPoints.get(goal).put(boxPos, points + 1);
                     queue.offer(boxPos);
+                    passedPlaces.add(boxPos);
                     visited.add(boxPos);
                 }
             }

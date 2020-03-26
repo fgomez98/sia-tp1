@@ -111,11 +111,11 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 10");
+        Board board = Board.from("./src/main/resources/Levels/Level 2.5");
 
         System.out.println(board.print(board.getInitialState()));
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.POINT_POSITION);
+        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.POINT_POSITION_OPT);
 
         long start = System.currentTimeMillis();
 
