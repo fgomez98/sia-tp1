@@ -51,11 +51,12 @@ public class HPAStorage implements Storage {
     @Override
     public void add(Node node) {
         if (explored.containsKey(node.getState())) {
-            double a = explored.get(node.getState()).getFnEvaluation();
-            double b = fn(node, w);
-            if (a < b || (a == b && explored.get(node.getState()).getHeuristic() < node.getEval())) {
-                return;
-            }
+//            double a = explored.get(node.getState()).getFnEvaluation();
+//            double b = fn(node, w);
+//            if (a < b || (a == b && explored.get(node.getState()).getHeuristic() < node.getEval())) {
+//                return;
+//            }
+            return;
         }
         priorityQueue.offer(node);
     }

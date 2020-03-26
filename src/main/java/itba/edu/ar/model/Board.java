@@ -17,6 +17,7 @@ public class Board {
     private Set<Coordinate> boxesInitial;
     private Coordinate playerInitial;
     private Map<Coordinate, Map<Coordinate, Integer>> boxGoalPoints = new HashMap<>();
+    private List<List<Integer>> combination;
 
     /*
         Se asume que los tableros son correctos y que siempre hay un jugador en los mismos
@@ -55,6 +56,14 @@ public class Board {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        board.combination = new LinkedList<>();
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i < board.getGoals().size(); i++) {
+            numbers.add(i);
+        }
+        permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
+
         board.rows = x;
         board.cols = yMax;
         board.analyseBoard();
@@ -274,6 +283,10 @@ public class Board {
         return walls;
     }
 
+    public List<List<Integer>> getCombination() {
+        return combination;
+    }
+
     public int getRows() {
         return rows;
     }
@@ -315,5 +328,20 @@ public class Board {
             state = board.move(state, movement);
         }
 
+    }
+
+    private static void permutationsOfIntegers(List<List<Integer>> combination, List<Integer> inter, List<Integer> goals) {
+        if (goals.isEmpty()) {
+            combination.add(new ArrayList<>(inter));
+            return;
+        }
+        List<Integer> goalAux = new LinkedList<>(goals);
+        for (Integer goal : goals) {
+            goalAux.remove(goal);
+            inter.add(goal);
+            permutationsOfIntegers(combination, inter, goalAux);
+            goalAux.add(goal);
+            inter.remove(goal);
+        }
     }
 }

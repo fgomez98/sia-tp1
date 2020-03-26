@@ -3,6 +3,7 @@ package itba.edu.ar.ai;
 import itba.edu.ar.model.Direction;
 import itba.edu.ar.model.State;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
 public class Node {
@@ -52,8 +53,8 @@ public class Node {
         Node node = (Node) o;
 
         if (depth != node.depth) return false;
-        if (state != null ? !state.equals(node.state) : node.state != null) return false;
-        return movements != null ? movements.equals(node.movements) : node.movements == null;
+        if (!Objects.equals(state, node.state)) return false;
+        return Objects.equals(movements, node.movements);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class Node {
         return state != null ? state.hashCode() : 0;
     }
 
-    private class Edge {
+    private static class Edge {
 
         private int cost;
         private Node adjecent;
