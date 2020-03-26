@@ -53,7 +53,7 @@ public class HPAStorage implements Storage {
         if (explored.containsKey(node.getState())) {
             double a = explored.get(node.getState()).getFnEvaluation();
             double b = fn(node, w);
-            if (a < b || (a == b && explored.get(node.getState()).getHeuristic() < node.getEval())) {
+            if (a < b || (a == b && explored.get(node.getState()).getHeuristic() <= node.getEval())) {
                 return;
             }
         }
