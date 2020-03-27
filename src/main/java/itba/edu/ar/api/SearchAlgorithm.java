@@ -18,8 +18,7 @@ public enum SearchAlgorithm {
         public Storage getStorage() {
             return BFSStorage.getStorage();
         }
-    },
-    GLOBAL_GREEDY {
+    }, GLOBAL_GREEDY {
         @Override
         public Storage getStorage() {
             return HPAStorage.getStorage(1);
