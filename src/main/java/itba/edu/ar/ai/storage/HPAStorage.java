@@ -64,7 +64,7 @@ public class HPAStorage implements Storage {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return priorityQueue.isEmpty();
     }
 
     private static class Function {
