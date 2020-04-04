@@ -111,7 +111,7 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 2.5");
+        Board board = Board.from("./src/main/resources/Levels/Level 5");
 
         System.out.println(board.print(board.getInitialState()));
 

@@ -67,6 +67,7 @@ public class Board {
         board.rows = x;
         board.cols = yMax;
         board.analyseBoard();
+        board.printPoints();
         return board;
     }
 
@@ -147,16 +148,18 @@ public class Board {
                 Coordinate boxPos = position.move(d);
                 Coordinate personPos = position.move(2, d);
                 if (inBounds(boxPos) && inBounds(personPos)
-                        && !walls.contains(boxPos) && !walls.contains(personPos)
-                        && !passedPlaces.contains(boxPos)) {
-                    passedPlaces.add(boxPos);
-                    int points = boxGoalPoints.get(position).get(goal);
-                    boxGoalPoints.computeIfAbsent(boxPos, k -> new HashMap<>());
-                    boxGoalPoints.get(boxPos).put(goal,points+1);
-                    //boxGoalPoints.get(goal).put(boxPos, points + 1);
-                    queue.offer(boxPos);
-                    passedPlaces.add(boxPos);
-                    visited.add(boxPos);
+                        && !walls.contains(boxPos) && !walls.contains(personPos)) {
+                    if(!passedPlaces.contains(boxPos) || (boxGoalPoints.get(boxPos).get(goal) > boxGoalPoints.get(position).get(goal)+1)){
+                        if(!passedPlaces.contains(boxPos)){
+                            passedPlaces.add(boxPos);
+                            visited.add(boxPos);
+                        }
+                        int points = boxGoalPoints.get(position).get(goal);
+                        boxGoalPoints.computeIfAbsent(boxPos, k -> new HashMap<>());
+                        boxGoalPoints.get(boxPos).put(goal,points+1);
+                        queue.offer(boxPos);
+                        passedPlaces.add(boxPos);
+                    }
                 }
             }
         }
@@ -266,6 +269,37 @@ public class Board {
                 } else {
                     sb.append(TILE.toString());
                 }
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
+    private String printPoints() {
+        StringBuilder sb = new StringBuilder();
+        for (Coordinate goal:goals){
+            sb.append("goal: ").append(goal.toString()).append('\n');
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    boolean flag = true;
+                    Coordinate coord = Coordinate.from(i, j);
+                    if (walls.contains(coord)) {
+                        sb.append(WALL.toString());
+                        flag = false;
+                    }else if(boxGoalPoints.get(coord) != null){
+                        if(boxGoalPoints.get(coord).get(goal) != null){
+                            String a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                            sb.append(a.toCharArray()[boxGoalPoints.get(coord).get(goal)]);
+                        }else{
+                            sb.append(' ');
+                        }
+                        flag = false;
+                    }
+                    if(flag && !walls.contains(coord) &&(boxGoalPoints.get(coord) == null || boxGoalPoints.get(coord).get(goal) != null)){
+                        sb.append(' ');
+                    }
+                }
+                sb.append('\n');
             }
             sb.append('\n');
         }

@@ -27,65 +27,6 @@ public enum Heuristics {
         }
     };
 
-    private BiFunction<Board, State, Integer> evaluate;
-//    private Map<Set<Coordinate>, Integer> pointsMap; //box positions and point
-
-
-//    public Heuristics(Board board, int heuristicNumber) {
-//        if (heuristicNumber == 0) {
-//            evaluate = this::evaluateManhattan;
-//        } else if (heuristicNumber == 1) {
-//            evaluate = this::evaluateManhattanOpt;
-//        } else {
-//            evaluate = this::evaluatePointPosition;
-
-//            Map<Coordinate, Map<Coordinate, Integer>> matrix = new HashMap<>();
-//            pointsMap = new HashMap<>();
-//
-//            for (Coordinate goal : board.getGoals()) {
-//                matrix.put(goal, new HashMap<>());
-//            }
-//
-//            calculateDistances(board, matrix);
-    //calculateBestDistances(board, matrix);
-//        }
-//    }
-
-    /**
-     * Para cada goal, hago el puntaje(distancia minima sin atravesar
-     * paredes) de cada posicion y lo guardo en la matriz.
-     *
-     * @param board  tablero de entrada
-     * @param matrix matriz vacia en que guardo los punta
-     */
-   /* private void calculateDistances(Board board, Map<Coordinate, Map<Coordinate, Integer>> matrix) {
-        int rows = board.getRows();
-        int columns = board.getCols();
-
-        for (Coordinate goal : board.getGoals()) {
-            Set<Coordinate> passedPlaces = new HashSet<>();
-            Queue<Coordinate> queue = new LinkedList<>();
-            matrix.get(goal).put(goal, 0);
-            passedPlaces.add(goal);
-            queue.add(goal);
-            while (!queue.isEmpty()) {
-                Coordinate position = queue.poll();
-                for (Direction dir : Direction.values()) {
-                    Coordinate boxPos = position.move(dir);
-                    Coordinate personPos = position.move(2, dir);
-                    if (!(boxPos.getX() < 0 || boxPos.getX() >= rows || personPos.getY() < 0 || personPos.getY() >= columns) &&
-                            !board.getWalls().contains(boxPos) && !board.getWalls().contains(personPos) &&
-                            !passedPlaces.contains(boxPos)) {
-                        passedPlaces.add(boxPos);
-                        int points = matrix.get(goal).get(position);
-                        matrix.get(goal).put(boxPos, points + 1);
-                        queue.add(boxPos);
-                    }
-                }
-            }
-        }
-    }*/
-
     /**
      * No Admisible. Hago la distancia tipo Manhattan entre las cajas y el objetivo mas cercano
      *
@@ -157,9 +98,13 @@ public enum Heuristics {
             }
             ret = Math.min(ret, sum);
         }
+        ret *= 100;
+        int aux = Integer.MAX_VALUE;
+        for (Coordinate box:state.getBoxes()) {
+            aux = Math.min(aux,calculateManhattan(box,state.getPlayer()));
+        }
 
-
-        return ret;
+        return ret+aux;
     }
 
     /**
@@ -184,34 +129,16 @@ public enum Heuristics {
             }
             ret = Math.min(ret, sum);
         }
-        return ret;
+        ret *= 100;
+        int aux = Integer.MAX_VALUE;
+        for (Coordinate box:state.getBoxes()) {
+            aux = Math.min(aux,calculateManhattan(box,state.getPlayer()));
+        }
+
+        return ret+aux;
+        /*return ret;*/
     }
 
-    /*private static List<List<Integer>> permutationsOfIntegers(List<Coordinate> boxes) {
-        List<List<Integer>> combination = new LinkedList<>();
-        List<Integer> numbers = new ArrayList<>();
-        for (int i = 0; i < boxes.size(); i++) {
-            numbers.add(i);
-        }
-        permutationsOfIntegers(combination, new LinkedList<>(), numbers);
-        return combination;
-    }
-
-    private static void permutationsOfIntegers(List<List<Integer>> combination, List<Integer> inter, List<Integer> goals) {
-        if (goals.isEmpty()) {
-            combination.add(new ArrayList<>(inter));
-            return;
-        }
-        List<Integer> goalAux = new LinkedList<>(goals);
-        for (Integer goal : goals) {
-            goalAux.remove(goal);
-            inter.add(goal);
-            permutationsOfIntegers(combination, inter, goalAux);
-            goalAux.add(goal);
-            inter.remove(goal);
-        }
-    }
-*/
     private static Integer calculateManhattan(Coordinate boxes, Coordinate goals) {
         int sum = 0;
         sum += Math.abs(goals.getX() - boxes.getX());
