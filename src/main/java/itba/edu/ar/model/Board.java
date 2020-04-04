@@ -62,7 +62,7 @@ public class Board {
         for (int i = 0; i < board.getGoals().size(); i++) {
             numbers.add(i);
         }
-//        permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
+        permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
 
         board.rows = x;
         board.cols = yMax;

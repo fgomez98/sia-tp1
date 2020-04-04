@@ -94,7 +94,7 @@ public enum Heuristics {
                 try {
                     sum += boxPoints.get(boxesList.get(j)).get(goalsList.get(integers.get(j)));
                 } catch (NullPointerException e) {
-                    sum += Integer.MAX_VALUE / 2;
+                    sum += Integer.MAX_VALUE / state.getBoxes().size();
                 }
             }
             ret = Math.min(ret, sum);
