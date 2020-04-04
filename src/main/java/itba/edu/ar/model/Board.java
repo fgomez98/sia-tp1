@@ -62,7 +62,7 @@ public class Board {
         for (int i = 0; i < board.getGoals().size(); i++) {
             numbers.add(i);
         }
-        permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
+//        permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
 
         board.rows = x;
         board.cols = yMax;
@@ -137,7 +137,7 @@ public class Board {
     private void pullFromGoal(Coordinate goal, Set<Coordinate> visited) {
         Set<Coordinate> passedPlaces = new HashSet<>();
         Queue<Coordinate> queue = new LinkedList<>();
-        boxGoalPoints.computeIfAbsent(goal,k->new HashMap<>());
+        boxGoalPoints.computeIfAbsent(goal, k -> new HashMap<>());
         boxGoalPoints.get(goal).put(goal, 0);
         passedPlaces.add(goal);
         visited.add(goal);
@@ -178,9 +178,46 @@ public class Board {
         return true;
     }
 
+    /*
+        Frozen boxes don't create a Freeze deadlock when being located on a goal. Nevertheless they may influence the reachable area of other boxes.
+     */
+    private boolean isBoxBlocked(Coordinate box, State state) {
+        Set<Coordinate> aux = new HashSet<>();
+        return isBoxBlockedRec(box, state, aux);
+    }
+
+    private boolean isBoxBlockedRec(Coordinate box, State state, Set<Coordinate> visitedBoxes) {
+        visitedBoxes.add(box);
+        // x-axis
+        Coordinate left = box.move(LEFT);
+        Coordinate right = box.move(RIGHT);
+        // y-axis
+        Coordinate up = box.move(UP);
+        Coordinate down = box.move(DOWN);
+        // si esta bloqueada en ambos ejes es un deadlock
+        return isBoxAxisBlocked(left, right, state, visitedBoxes) & isBoxAxisBlocked(up, down, state, visitedBoxes);
+    }
+
+    private boolean isBoxAxisBlocked(Coordinate sideA, Coordinate sideB, State state, Set<Coordinate> visitedBoxes) {
+        if (walls.contains(sideA) || walls.contains(sideB)) {
+            return true;
+        } else if (deadBoxes.contains(sideA) & deadBoxes.contains(sideB)) {
+            return true;
+        } else if (visitedBoxes.contains(sideA) || visitedBoxes.contains(sideB)) {
+            return true;
+        } else if (state.getBoxes().contains(sideA)) {
+            return isBoxBlockedRec(sideA, state, visitedBoxes);
+        } else if (state.getBoxes().contains(sideB)) {
+            return isBoxBlockedRec(sideB, state, visitedBoxes);
+        }
+        return false;
+    }
+
     private boolean isDeadlock(State state) {
         for (Coordinate coord : state.getBoxes()) {
             if (deadBoxes.contains(coord)) {
+                return true;
+            } else if (!goals.contains(coord) && isBoxBlocked(coord, state)) {
                 return true;
             }
         }
@@ -340,7 +377,7 @@ public class Board {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 1");
+        Board board = Board.from("./src/main/resources/Levels/Level 11");
         State state = board.getInitialState();
 
         System.out.println("Type Up, Down, Right, Left to move sokoban");
@@ -348,9 +385,15 @@ public class Board {
         while (!board.isComplete(state)) {
             System.out.println(board.print(state));
 
-            System.out.println("We asume that you will NOT enter an invalid movement");
             StringBuilder sb = new StringBuilder("Posible movements: ");
-            board.getPosibleMovements(state).forEach(direction -> sb.append(direction.name()).append(' '));
+            List<Direction> posibleMovments = board.getPosibleMovements(state);
+
+            if (posibleMovments.isEmpty()) {
+                System.out.println("Your deadlock...");
+                break;
+            }
+
+            posibleMovments.forEach(direction -> sb.append(direction.name()).append(' '));
             System.out.println(sb.toString());
 
             System.out.println("Your move...");
@@ -358,9 +401,15 @@ public class Board {
             Scanner input = new Scanner(System.in);
             String line = input.nextLine();
 
-            Direction movement = Direction.valueOf(line.trim().toUpperCase());
+            Optional<Direction> movement = Direction.from(line);
 
-            state = board.move(state, movement);
+            if (movement.isPresent()) {
+                if (posibleMovments.contains(movement.get())) {
+                    state = board.move(state, movement.get());
+                    continue;
+                }
+            }
+            System.out.println("invalid movement");
         }
 
     }

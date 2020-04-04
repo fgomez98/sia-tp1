@@ -1,5 +1,6 @@
 package itba.edu.ar.ai.storage;
 
+import itba.edu.ar.ai.Benchmarking;
 import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.IDStorage;
 import itba.edu.ar.api.Storage;
@@ -44,6 +45,7 @@ public class IDDFSStorage implements Storage, IDStorage {
         if (explored.containsKey(node.getState()) && explored.get(node.getState()) <= node.getDepth()) {
             return;
         }
+        Benchmarking.nodesFronteer++;
         if (node.getDepth() <= limit) {
             primaryStack.push(node);
         }

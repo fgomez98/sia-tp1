@@ -1,5 +1,6 @@
 package itba.edu.ar.ai.storage;
 
+import itba.edu.ar.ai.Benchmarking;
 import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.State;
@@ -25,6 +26,7 @@ public class DFSStorage implements Storage {
     @Override
     public void add(Node node) {
         if (!explored.contains(node.getState())) {
+            Benchmarking.nodesFronteer++;
             stack.push(node);
         }
     }

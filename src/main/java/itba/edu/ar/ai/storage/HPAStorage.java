@@ -1,5 +1,6 @@
 package itba.edu.ar.ai.storage;
 
+import itba.edu.ar.ai.Benchmarking;
 import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.Storage;
 import itba.edu.ar.model.State;
@@ -57,12 +58,13 @@ public class HPAStorage implements Storage {
                 return;
             }
         }
+        Benchmarking.nodesFronteer++;
         priorityQueue.offer(node);
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return priorityQueue.isEmpty();
     }
 
     private static class Function {

@@ -42,11 +42,12 @@ public enum Heuristics {
             int minDistanceSum = Integer.MAX_VALUE;
 
             for (Coordinate goal : board.getGoals()) {
-
                 minDistanceSum = Math.min(calculateManhattan(goal, box), minDistanceSum);
             }
             ret += minDistanceSum;
-
+//            for (Direction d : Direction.surroundings) {
+//                ret += (board.getWalls().contains(box.move(d))) ? 1 : 0;
+//            }
         }
         return ret;
     }
