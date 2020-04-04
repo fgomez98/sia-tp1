@@ -156,11 +156,12 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 2");
+        Board board = Board.from("./src/main/resources/Levels/Level 11");
 
         System.out.println(board.print(board.getInitialState()));
+        System.out.println(board.printDeadBoxes());
 
-        SolverImpl solver = new SolverImpl(board, GLOBAL_GREEDY, Heuristics.MANHATTAN);
+        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.MANHATTAN);
 
         Optional<Node> solution = solver.solve();
 
