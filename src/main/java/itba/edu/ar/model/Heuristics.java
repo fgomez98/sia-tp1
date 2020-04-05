@@ -25,6 +25,11 @@ public enum Heuristics {
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluatePointsNoPermutation;
         }
+    }, PYTHAGORAS(){
+        @Override
+        public BiFunction<Board, State, Integer> getEvaluate() {
+            return Heuristics::evaluatePythagorasPermutation;
+        }
     };
 
     /**
@@ -44,10 +49,23 @@ public enum Heuristics {
             for (Coordinate goal : board.getGoals()) {
                 minDistanceSum = Math.min(calculateManhattan(goal, box), minDistanceSum);
             }
+            ret += minDistanceSum + calculateManhattan(state.getPlayer(), box);
+        }
+        return ret;
+    }
+
+    private static int evaluatePythagorasPermutation(Board board,State state){
+        int ret = 0;
+
+        for (Coordinate box : state.getBoxes()) {
+
+            int minDistanceSum = Integer.MAX_VALUE;
+
+            for (Coordinate goal : board.getGoals()) {
+                minDistanceSum = Math.min(calculatePythagoras(goal, box), minDistanceSum);
+            }
             ret += minDistanceSum;
-//            for (Direction d : Direction.surroundings) {
-//                ret += (board.getWalls().contains(box.move(d))) ? 1 : 0;
-//            }
+
         }
         return ret;
     }
@@ -92,6 +110,7 @@ public enum Heuristics {
             int sum = 0;
             for (int j = 0; j < boxesList.size(); j++) {
                 try {
+                    sum += calculateManhattan(boxesList.get(j),state.getPlayer());
                     sum += boxPoints.get(boxesList.get(j)).get(goalsList.get(integers.get(j)));
                 } catch (NullPointerException e) {
                     sum += Integer.MAX_VALUE / state.getBoxes().size();
@@ -99,13 +118,8 @@ public enum Heuristics {
             }
             ret = Math.min(ret, sum);
         }
-        ret *= 100;
-        int aux = Integer.MAX_VALUE;
-        for (Coordinate box:state.getBoxes()) {
-            aux = Math.min(aux,calculateManhattan(box,state.getPlayer()));
-        }
 
-        return ret+aux;
+        return ret;
     }
 
     /**
@@ -126,18 +140,19 @@ public enum Heuristics {
         for (List<Integer> integers : combination) {
             int sum = 0;
             for (int j = 0; j < boxes.size(); j++) {
+//                sum += calculateManhattan(boxes.get(j),state.getPlayer());
                 sum += calculateManhattan(boxes.get(j), goals.get(integers.get(j)));
             }
             ret = Math.min(ret, sum);
         }
-        ret *= 100;
-        int aux = Integer.MAX_VALUE;
-        for (Coordinate box:state.getBoxes()) {
-            aux = Math.min(aux,calculateManhattan(box,state.getPlayer()));
-        }
-
-        return ret+aux;
-        /*return ret;*/
+//        ret *= 100;
+//        int aux = Integer.MAX_VALUE;
+//        for (Coordinate box:state.getBoxes()) {
+//            aux = Math.min(aux,calculateManhattan(box,state.getPlayer()));
+//        }
+//
+//        return ret+aux;
+        return ret;
     }
 
     private static Integer calculateManhattan(Coordinate boxes, Coordinate goals) {
@@ -145,6 +160,9 @@ public enum Heuristics {
         sum += Math.abs(goals.getX() - boxes.getX());
         sum += Math.abs(goals.getY() - boxes.getY());
         return sum;
+    }
+    private static int calculatePythagoras(Coordinate goals, Coordinate boxes) {
+        return (int) Math.sqrt(Math.pow(goals.getX() - boxes.getX(),2) + Math.pow(goals.getY() - boxes.getY(),2));
     }
 
     public abstract BiFunction<Board, State, Integer> getEvaluate();

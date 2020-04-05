@@ -28,13 +28,13 @@ public enum Direction {
 
     public static List<Direction> directions = Arrays.asList(UP, DOWN, LEFT, RIGHT);
 
-    public static List<Direction> surroundings = Arrays.asList(UP, DOWN, LEFT, RIGHT);
+    public static List<Direction> surroundings = Arrays.asList(UP, DOWN, LEFT, RIGHT, UP_RIGHT, DOWN_RIGHT, UP_LEFT, DOWN_LEFT);
 
     public static Optional<Direction> from(String str) {
-        if(str != null ) {
+        if (str != null) {
             try {
                 return Optional.of(Direction.valueOf(str.trim().toUpperCase()));
-            } catch(IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) {
                 return Optional.empty();
             }
         }
