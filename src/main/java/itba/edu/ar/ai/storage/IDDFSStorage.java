@@ -56,6 +56,7 @@ public class IDDFSStorage implements Storage, IDStorage {
 
     @Override
     public Node get() {
+        Benchmarking.nodesFrontier--;
         Node node = primaryStack.pop();
         explored.put(node.getState(), node.getDepth());
         return node;

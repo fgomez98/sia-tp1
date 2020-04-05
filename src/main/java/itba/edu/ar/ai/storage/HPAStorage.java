@@ -44,6 +44,7 @@ public class HPAStorage implements Storage {
 
     @Override
     public Node get() {
+        Benchmarking.nodesFrontier--;
         Node node = priorityQueue.poll();
         frontier.remove(node.getState());
         explored.put(node.getState(), node);

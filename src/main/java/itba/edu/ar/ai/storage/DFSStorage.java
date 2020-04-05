@@ -33,6 +33,7 @@ public class DFSStorage implements Storage {
 
     @Override
     public Node get() {
+        Benchmarking.nodesFrontier--;
         Node node = stack.pop();
         explored.add(node.getState());
         return node;
