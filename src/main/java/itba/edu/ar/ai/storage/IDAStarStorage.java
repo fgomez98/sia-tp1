@@ -20,7 +20,7 @@ public class IDAStarStorage extends IDDFSStorage implements Storage, IDStorage {
     @Override
     public void add(Node node) {
         super.add(node);
-        int fn = node.getEval();
+        int fn = node.getHn();
         nextLimit = (nextLimit == -1 || fn < nextLimit) ? fn : nextLimit;
     }
 

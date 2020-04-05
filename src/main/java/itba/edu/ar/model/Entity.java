@@ -2,7 +2,7 @@ package itba.edu.ar.model;
 
 public enum Entity {
 
-    PLAYER('@'), BOX('$'), GOAL('.'), WALL('#'), TILE(' '), GOAL_BOX('*');
+    PLAYER('@'), BOX('$'), GOAL('.'), WALL('#'), TILE(' '), GOAL_BOX('*'), GOAL_PLAYER('+');
 
     private final char c;
 
@@ -27,6 +27,8 @@ public enum Entity {
                 return WALL;
             case '*':
                 return GOAL_BOX;
+            case '+':
+                return GOAL_PLAYER;
             default:
                 return TILE;
         }

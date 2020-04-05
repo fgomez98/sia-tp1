@@ -28,7 +28,7 @@ public enum Direction {
 
     public static List<Direction> directions = Arrays.asList(UP, DOWN, LEFT, RIGHT);
 
-    public static List<Direction> surroundings = Arrays.asList(UP, DOWN, LEFT, RIGHT, UP_RIGHT, DOWN_RIGHT, UP_LEFT, DOWN_LEFT);
+    public static List<Direction> surroundings = Arrays.asList(UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT);
 
     public static Optional<Direction> from(String str) {
         if (str != null) {

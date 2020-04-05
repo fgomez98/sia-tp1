@@ -45,7 +45,7 @@ public class IDDFSStorage implements Storage, IDStorage {
         if (explored.containsKey(node.getState()) && explored.get(node.getState()) <= node.getDepth()) {
             return;
         }
-        Benchmarking.nodesFronteer++;
+        Benchmarking.nodesFrontier++;
         if (node.getDepth() <= limit) {
             primaryStack.push(node);
         }
