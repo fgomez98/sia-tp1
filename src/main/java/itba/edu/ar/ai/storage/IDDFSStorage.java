@@ -24,16 +24,18 @@ public class IDDFSStorage implements Storage, IDStorage {
     private Stack<Node> secondaryStack;
     private Map<State, Integer> explored;
     private int limit;
+    private boolean resetTree;
 
-    IDDFSStorage() {
+    IDDFSStorage(boolean resetTree) {
         this.primaryStack = new Stack<>();
         this.secondaryStack = new Stack<>();
         explored = new HashMap<>();
         this.limit = 0;
+        this.resetTree = resetTree;
     }
 
-    public static IDDFSStorage getStorage() {
-        return new IDDFSStorage();
+    public static IDDFSStorage getStorage(boolean resetTree) {
+        return new IDDFSStorage(resetTree);
     }
 
     /*
@@ -49,7 +51,7 @@ public class IDDFSStorage implements Storage, IDStorage {
         if (node.getDepth() <= limit) {
             primaryStack.push(node);
         }
-        if (node.getDepth() == limit) {
+        if (!resetTree && node.getDepth() == limit) {
             secondaryStack.push(node);
         }
     }
@@ -80,7 +82,7 @@ public class IDDFSStorage implements Storage, IDStorage {
         return limit;
     }
 
-    void setLimit(int limit) {
+    protected void setLimit(int limit) {
         this.limit = limit;
     }
 }

@@ -8,13 +8,13 @@ public class IDAStarStorage extends IDDFSStorage implements Storage, IDStorage {
 
     private int nextLimit;
 
-    private IDAStarStorage() {
-        super();
+    private IDAStarStorage(boolean resetTree) {
+        super(resetTree);
         nextLimit = -1;
     }
 
-    public static IDAStarStorage getStorage() {
-        return new IDAStarStorage();
+    public static IDAStarStorage getStorage(boolean resetTree) {
+        return new IDAStarStorage(resetTree);
     }
 
     @Override

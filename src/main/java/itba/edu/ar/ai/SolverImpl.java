@@ -20,12 +20,14 @@ public class SolverImpl implements Solver {
     private Storage frontier;
     private SearchAlgorithm algorithm;
     private Heuristics heuristic;
+    private boolean deadlocks;
 
-    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic) {
+    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic, boolean deadlocks) {
         this.board = board;
         this.frontier = algorithm.getStorage();
         this.algorithm = algorithm;
         this.heuristic = heuristic;
+        this.deadlocks = deadlocks;
     }
 
     @Override
@@ -84,7 +86,7 @@ public class SolverImpl implements Solver {
         Caso ciclos, no queda otra que revisar la branch
     */
     private void explode(Node node) {
-        for (Direction direction : board.getPosibleMovements(node.getState())) {
+        for (Direction direction : board.getPosibleMovements(node.getState(), deadlocks)) {
             State childState = board.move(node.getState(), direction);
             Node.Builder child = new Node.Builder(childState)
                     .withParent(node)
@@ -157,12 +159,12 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 12");
+        Board board = Board.from("./src/main/resources/Levels/Level 10");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        SolverImpl solver = new SolverImpl(board, DFS, Heuristics.MANHATTAN);
+        SolverImpl solver = new SolverImpl(board, DFS, Heuristics.MANHATTAN, true);
 
         Optional<Node> solution = solver.solve();
 

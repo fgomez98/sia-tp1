@@ -228,9 +228,9 @@ public class Board {
         return false;
     }
 
-    public List<Direction> getPosibleMovements(State state) {
+    public List<Direction> getPosibleMovements(State state, boolean deadlocks) {
         List<Direction> movements = new LinkedList<>();
-        if (isDeadlock(state)) {
+        if (deadlocks && isDeadlock(state)) {
             return movements;
         }
         for (Direction d : Direction.directions) {
@@ -394,7 +394,7 @@ public class Board {
             System.out.println(board.print(state));
 
             StringBuilder sb = new StringBuilder("Posible movements: ");
-            List<Direction> posibleMovments = board.getPosibleMovements(state);
+            List<Direction> posibleMovments = board.getPosibleMovements(state, true);
 
             if (posibleMovments.isEmpty()) {
                 System.out.println("Your deadlock...");
