@@ -59,6 +59,8 @@ public class SolverImpl implements Solver {
             } else {
                 explode(node);
             }
+
+            node.cleanMovements();
         }
         Benchmarking.end = System.currentTimeMillis();
         return Optional.empty();
@@ -88,7 +90,7 @@ public class SolverImpl implements Solver {
             Node.Builder child = new Node.Builder(childState)
                     .withParent(node)
                     .withMovement(direction)
-                    .withCost(node.getCost() + Cost.getCost(childState));
+                    .withCost(node.getGn() + Cost.getCost(childState));
             if (heuristic != null) {
                 child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState));
             }
@@ -131,7 +133,7 @@ public class SolverImpl implements Solver {
             sb.append("Heuristic: None").append('\n');
         }
         sb.append("Time: ").append(Benchmarking.getSimTime()).append(" sec").append('\n');
-        sb.append("Cost: ").append(node.getCost()).append('\n');
+        sb.append("Cost: ").append(node.getGn()).append('\n');
         sb.append("Depth: ").append(node.getDepth()).append('\n');
         sb.append("Nodes exploted: ").append(Benchmarking.nodesExploted).append('\n');
         sb.append("Nodes fronteer: ").append(Benchmarking.nodesFrontier).append('\n');
@@ -156,12 +158,12 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 12");
+        Board board = Board.from("./src/main/resources/Levels/Level 3");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.MANHATTAN);
+        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.POINT_POSITION);
 
         Optional<Node> solution = solver.solve();
 
