@@ -49,12 +49,14 @@ public class Node {
         if (depth != node.depth) return false;
         if (hn != node.hn) return false;
         if (gn != node.gn) return false;
-        return state != null ? state.equals(node.state) : node.state == null;
+        if (state != null ? !state.equals(node.state) : node.state != null) return false;
+        return movements != null ? movements.equals(node.movements) : node.movements == null;
     }
 
     @Override
     public int hashCode() {
         int result = state != null ? state.hashCode() : 0;
+        result = 31 * result + (movements != null ? movements.hashCode() : 0);
         result = 31 * result + depth;
         result = 31 * result + hn;
         result = 31 * result + gn;

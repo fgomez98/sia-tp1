@@ -58,9 +58,8 @@ public class SolverImpl implements Solver {
                 }
             } else {
                 explode(node);
+                node.cleanMovements();
             }
-
-            node.cleanMovements();
         }
         Benchmarking.end = System.currentTimeMillis();
         return Optional.empty();
@@ -158,12 +157,12 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 3");
+        Board board = Board.from("./src/main/resources/Levels/Level 12");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.POINT_POSITION);
+        SolverImpl solver = new SolverImpl(board, DFS, Heuristics.MANHATTAN);
 
         Optional<Node> solution = solver.solve();
 

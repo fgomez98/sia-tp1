@@ -74,6 +74,18 @@ public class HPAStorage implements Storage {
                 frontier.put(node.getState(), node);
             }
         }
+
+        /*
+        if (explored.containsKey(node.getState())) {
+            double a = fn(explored.get(node.getState()), w);
+            double b = fn(node, w);
+            if (a < b || (a == b && explored.get(node.getState()).getHn() <= node.getHn())) {
+                return;
+            }
+        }
+        Benchmarking.nodesFrontier++;
+        priorityQueue.offer(node);
+        */
     }
 
     @Override
