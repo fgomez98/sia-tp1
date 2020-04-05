@@ -58,7 +58,7 @@ public class HPAStorage implements Storage {
                 return;
             }
         }
-        Benchmarking.nodesFronteer++;
+        Benchmarking.nodesFrontier++;
         priorityQueue.offer(node);
     }
 

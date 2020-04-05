@@ -134,7 +134,7 @@ public class SolverImpl implements Solver {
         sb.append("Cost: ").append(node.getCost()).append('\n');
         sb.append("Depth: ").append(node.getDepth()).append('\n');
         sb.append("Nodes exploted: ").append(Benchmarking.nodesExploted).append('\n');
-        sb.append("Nodes fronteer: ").append(Benchmarking.nodesFronteer).append('\n');
+        sb.append("Nodes fronteer: ").append(Benchmarking.nodesFrontier).append('\n');
         sb.append("Movements: ");
         for (Direction movement : node.getMovements()) {
             sb.append(movement.name()).append(", ");
@@ -156,7 +156,7 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 11");
+        Board board = Board.from("./src/main/resources/Levels/Level 12");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());

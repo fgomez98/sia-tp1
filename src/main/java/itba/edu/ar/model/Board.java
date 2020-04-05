@@ -88,6 +88,10 @@ public class Board {
                 boxesInitial.add(Coordinate.from(x, y));
                 goals.add(Coordinate.from(x, y));
                 break;
+            case GOAL_PLAYER:
+                goals.add(Coordinate.from(x, y));
+                playerInitial = Coordinate.from(x, y);
+                break;
             default:
                 break;
         }
@@ -296,6 +300,10 @@ public class Board {
                     }
                     sb.append(BOX.toString());
                 } else if (state.getPlayer().equals(coord)) {
+                    if (goals.contains(coord)) {
+                        sb.append(GOAL_PLAYER.toString());
+                        continue;
+                    }
                     sb.append(PLAYER.toString());
                 } else if (goals.contains(coord)) {
                     sb.append(GOAL.toString());
@@ -342,7 +350,7 @@ public class Board {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 11");
+        Board board = Board.from("./src/main/resources/Levels/Level 12");
         State state = board.getInitialState();
 
         System.out.println("Type Up, Down, Right, Left to move sokoban");
