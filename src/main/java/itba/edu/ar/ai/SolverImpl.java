@@ -18,13 +18,15 @@ public class SolverImpl implements Solver {
     private SearchAlgorithm algorithm;
     private Heuristics heuristic;
     private boolean deadlocks;
+    private long timebreak;
 
-    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic, boolean deadlocks) {
+    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic, long timebreak, boolean deadlocks) {
         this.board = board;
         this.frontier = algorithm.getStorage();
         this.algorithm = algorithm;
         this.heuristic = heuristic;
         this.deadlocks = deadlocks;
+        this.timebreak = timebreak;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class SolverImpl implements Solver {
         }
         frontier.add(root.build());
 
-        while (!frontier.isEmpty()) {
+        while (!frontier.isEmpty() && (System.currentTimeMillis() - Benchmarking.start) < timebreak) {
             /* Quitamos un nodo de la frontera */
             Node node = frontier.get();
 
@@ -164,14 +166,14 @@ public class SolverImpl implements Solver {
         System.out.println(board.printDeadBoxes());
 
         Heuristics heuristics = Heuristics.GREEDY_ASSIGNMENT;
-        if(board.getInitialState().getBoxes().size() >= 5){
+        if (board.getInitialState().getBoxes().size() >= 5) {
             if (heuristics == Heuristics.MANHATTAN_OPT)
                 heuristics = Heuristics.MANHATTAN;
-            else if(heuristics == Heuristics.POINT_POSITION_OPT)
+            else if (heuristics == Heuristics.POINT_POSITION_OPT)
                 heuristics = Heuristics.POINT_POSITION;
         }
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics,true);
+        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics, Long.MAX_VALUE, true);
 
 
         Either<Node,Boolean> solution = solver.solve();
