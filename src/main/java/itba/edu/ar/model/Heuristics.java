@@ -49,7 +49,7 @@ public enum Heuristics {
             for (Coordinate goal : board.getGoals()) {
                 minDistanceSum = Math.min(calculateManhattan(goal, box), minDistanceSum);
             }
-            ret += minDistanceSum + calculateManhattan(state.getPlayer(), box);
+            ret += minDistanceSum;
         }
         return ret;
     }

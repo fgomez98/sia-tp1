@@ -11,7 +11,7 @@ public class HPAStorage implements Storage {
 
     private Map<State, Node> frontier; // contains en O(1)
     private PriorityQueue<Node> priorityQueue;
-    private Map<State, Node> explored;
+    private Map<State, Function> explored;
     private double w;
 
     /*
@@ -47,7 +47,7 @@ public class HPAStorage implements Storage {
         Benchmarking.nodesFrontier--;
         Node node = priorityQueue.poll();
         frontier.remove(node.getState());
-        explored.put(node.getState(), node);
+        explored.put(node.getState(), new Function(node.getHn(), fn(node, w)));
         return node;
     }
 
@@ -67,10 +67,10 @@ public class HPAStorage implements Storage {
                 frontier.put(node.getState(), node);
             }
         } else if (explored.containsKey(node.getState())) {
-            Node nodeInExplored = explored.get(node.getState());
-            double exploredFn = fn(nodeInExplored, w);
+            Function nodeInExplored = explored.get(node.getState());
+            double exploredFn = nodeInExplored.getFnEvaluation();
             double currentFn = fn(node, w);
-            if (currentFn < exploredFn || (currentFn == exploredFn) && node.getHn() < nodeInExplored.getHn()) {
+            if (currentFn < exploredFn || (currentFn == exploredFn) && node.getHn() < nodeInExplored.getHnEvaluation()) {
                 priorityQueue.offer(node);
                 frontier.put(node.getState(), node);
             }
@@ -87,6 +87,29 @@ public class HPAStorage implements Storage {
         Benchmarking.nodesFrontier++;
         priorityQueue.offer(node);
         */
+    }
+
+    private static class Function {
+
+        private double hnEvaluation;
+        private double fnEvaluation;
+
+        private Function(double hnEvaluation, double fnEvaluation) {
+            this.fnEvaluation = fnEvaluation;
+            this.hnEvaluation = hnEvaluation;
+        }
+
+        public static Function from(double heuristic, double fnEvaluation) {
+            return new Function(heuristic, fnEvaluation);
+        }
+
+        public double getHnEvaluation() {
+            return hnEvaluation;
+        }
+
+        public double getFnEvaluation() {
+            return fnEvaluation;
+        }
     }
 
     @Override
