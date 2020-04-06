@@ -166,14 +166,14 @@ public class SolverImpl implements Solver {
         System.out.println(board.printDeadBoxes());
 
         Heuristics heuristics = Heuristics.GREEDY_ASSIGNMENT;
-        if(board.getInitialState().getBoxes().size() >= 5){
+        if (board.getInitialState().getBoxes().size() >= 5) {
             if (heuristics == Heuristics.MANHATTAN_OPT)
                 heuristics = Heuristics.MANHATTAN;
-            else if(heuristics == Heuristics.POINT_POSITION_OPT)
+            else if (heuristics == Heuristics.POINT_POSITION_OPT)
                 heuristics = Heuristics.POINT_POSITION;
         }
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics,true);
+        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics, Long.MAX_VALUE, true);
 
 
         Optional<Node> solution = solver.solve();
