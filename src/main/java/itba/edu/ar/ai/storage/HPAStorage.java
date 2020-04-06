@@ -44,7 +44,6 @@ public class HPAStorage implements Storage {
 
     @Override
     public Node get() {
-        Benchmarking.nodesFrontier--;
         Node node = priorityQueue.poll();
         frontier.remove(node.getState());
         explored.put(node.getState(), new Function(node.getHn(), fn(node, w)));
@@ -54,7 +53,6 @@ public class HPAStorage implements Storage {
     @Override
     public void add(Node node) {
         if (!explored.containsKey(node.getState()) && !frontier.containsKey(node.getState())) {
-            Benchmarking.nodesFrontier++;
             priorityQueue.offer(node);
             frontier.put(node.getState(), node);
         } else if (frontier.containsKey(node.getState())) {
@@ -71,7 +69,6 @@ public class HPAStorage implements Storage {
             double exploredFn = nodeInExplored.getFnEvaluation();
             double currentFn = fn(node, w);
             if (currentFn < exploredFn || (currentFn == exploredFn) && node.getHn() < nodeInExplored.getHnEvaluation()) {
-                Benchmarking.nodesFrontier++;
                 priorityQueue.offer(node);
                 frontier.put(node.getState(), node);
             }
@@ -85,7 +82,6 @@ public class HPAStorage implements Storage {
                 return;
             }
         }
-        Benchmarking.nodesFrontier++;
         priorityQueue.offer(node);
         */
     }
@@ -116,5 +112,15 @@ public class HPAStorage implements Storage {
     @Override
     public boolean isEmpty() {
         return priorityQueue.isEmpty();
+    }
+
+    @Override
+    public int frontierSize() {
+        return priorityQueue.size();
+    }
+
+    @Override
+    public int exploredSize() {
+        return explored.size();
     }
 }

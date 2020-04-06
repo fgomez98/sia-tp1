@@ -64,6 +64,8 @@ public class SolverImpl implements Solver {
                 return Either.alternative(true);
             }
         }
+        Benchmarking.nodesFrontier = frontier.frontierSize();
+        Benchmarking.nodesExplorados = frontier.exploredSize();
         Benchmarking.end = System.currentTimeMillis();
         return Either.alternative(false);
     }
@@ -144,6 +146,7 @@ public class SolverImpl implements Solver {
         }
 
         sb.append("Nodos explotados: ").append(Benchmarking.nodesExploted).append('\n');
+        sb.append("Nodos explorados: ").append(Benchmarking.nodesExplorados).append('\n');
         sb.append("Nodos frontera: ").append(Benchmarking.nodesFrontier).append('\n');
 
         if (either.isValuePresent()) {

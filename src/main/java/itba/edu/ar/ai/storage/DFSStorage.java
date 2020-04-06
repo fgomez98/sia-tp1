@@ -26,14 +26,12 @@ public class DFSStorage implements Storage {
     @Override
     public void add(Node node) {
         if (!explored.contains(node.getState())) {
-            Benchmarking.nodesFrontier++;
             stack.push(node);
         }
     }
 
     @Override
     public Node get() {
-        Benchmarking.nodesFrontier--;
         Node node = stack.pop();
         explored.add(node.getState());
         return node;
@@ -42,5 +40,15 @@ public class DFSStorage implements Storage {
     @Override
     public boolean isEmpty() {
         return stack.empty();
+    }
+
+    @Override
+    public int frontierSize() {
+        return stack.size();
+    }
+
+    @Override
+    public int exploredSize() {
+        return explored.size();
     }
 }

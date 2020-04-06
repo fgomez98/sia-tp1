@@ -47,7 +47,6 @@ public class IDDFSStorage implements Storage, IDStorage {
         if (explored.containsKey(node.getState()) && explored.get(node.getState()) <= node.getDepth()) {
             return;
         }
-        Benchmarking.nodesFrontier++;
         if (node.getDepth() <= limit) {
             primaryStack.push(node);
         }
@@ -58,7 +57,6 @@ public class IDDFSStorage implements Storage, IDStorage {
 
     @Override
     public Node get() {
-        Benchmarking.nodesFrontier--;
         Node node = primaryStack.pop();
         explored.put(node.getState(), node.getDepth());
         return node;
@@ -84,5 +82,15 @@ public class IDDFSStorage implements Storage, IDStorage {
 
     protected void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    @Override
+    public int frontierSize() {
+        return primaryStack.size();
+    }
+
+    @Override
+    public int exploredSize() {
+        return explored.size();
     }
 }
