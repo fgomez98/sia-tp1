@@ -30,7 +30,7 @@ public class SolverImpl implements Solver {
     }
 
     @Override
-    public Either<Node,Boolean> solve() {
+    public Either<Node, Boolean> solve() {
         Benchmarking.start = System.currentTimeMillis();
         Node.Builder root = new Node.Builder(board.getInitialState()).withCost(0);
         if (heuristic != null) {
@@ -60,7 +60,7 @@ public class SolverImpl implements Solver {
             } else {
                 explode(node);
             }
-            if((System.currentTimeMillis()-Benchmarking.start) > timebreak){
+            if ((System.currentTimeMillis() - Benchmarking.start) > timebreak) {
                 return Either.alternative(true);
             }
         }
@@ -124,11 +124,10 @@ public class SolverImpl implements Solver {
         System.out.println(colorReset);
     }
 
-    public void outputMovements(Node node, String fileName) throws IOException {
+    public void outputMovements(Either<Node, Boolean> either, String fileName) throws IOException {
         Writer writer = new FileWriter(fileName);
 
-        Queue<Direction> movements = node.getMovements();
-        State currentState = board.getInitialState();
+        Node node = either.getValue();
 
         StringBuilder sb = new StringBuilder();
         sb.append("Algoritmo de Busqueda: ").append(this.algorithm.name()).append('\n');
@@ -138,25 +137,37 @@ public class SolverImpl implements Solver {
             sb.append("Heuristica: None").append('\n');
         }
         sb.append("Tiempo: ").append(Benchmarking.getSimTime()).append(" seg").append('\n');
-        sb.append("Costo: ").append(node.getGn()).append('\n');
-        sb.append("Depth: ").append(node.getDepth()).append('\n');
+
+        if (either.isValuePresent()) {
+            sb.append("Costo: ").append(node.getGn()).append('\n');
+            sb.append("Depth: ").append(node.getDepth()).append('\n');
+        }
+
         sb.append("Nodos explotados: ").append(Benchmarking.nodesExploted).append('\n');
         sb.append("Nodos frontera: ").append(Benchmarking.nodesFrontier).append('\n');
-        sb.append("Movimientos: ");
-        for (Direction movement : node.getMovements()) {
-            sb.append(movement.name()).append(", ");
+
+        if (either.isValuePresent()) {
+            sb.append("Movimientos: ");
+            for (Direction movement : node.getMovements()) {
+                sb.append(movement.name()).append(", ");
+            }
+            sb.append('\n');
         }
-        sb.append('\n');
 
         writer.write(sb.toString());
+
+        State currentState = board.getInitialState();
         writer.write(board.print(currentState));
 
-        while (!movements.isEmpty()) {
-            Direction direction = movements.poll();
-            currentState = board.move(currentState, direction);
-            writer.write(direction.name());
-            writer.write('\n');
-            writer.write(board.print(currentState));
+        if (either.isValuePresent()) {
+            Queue<Direction> movements = node.getMovements();
+            while (!movements.isEmpty()) {
+                Direction direction = movements.poll();
+                currentState = board.move(currentState, direction);
+                writer.write(direction.name());
+                writer.write('\n');
+                writer.write(board.print(currentState));
+            }
         }
 
         writer.close();
@@ -179,15 +190,13 @@ public class SolverImpl implements Solver {
         SolverImpl solver = new SolverImpl(board, A_STAR, heuristics, Long.MAX_VALUE, true);
 
 
-        Either<Node,Boolean> solution = solver.solve();
+        Either<Node, Boolean> solution = solver.solve();
+        try {
+            solver.outputMovements(solution, "./src/main/resources/Solutions/" + solver.algorithm.name() + "_" + solver.heuristic.name() + ".txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        solution.ifPresent(sol -> {
-            try {
-                solver.outputMovements(sol, "./src/main/resources/Solutions/" + solver.algorithm.name() + "_" + solver.heuristic.name() + ".txt");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
 
         if (solution.isValuePresent()) {
             System.out.println("Solution");
@@ -195,7 +204,7 @@ public class SolverImpl implements Solver {
             System.out.println("nodes:" + Benchmarking.nodesExploted);
             System.out.println("time:" + Benchmarking.getSimTime());
         } else {
-            if(solution.getAlternative())
+            if (solution.getAlternative())
                 System.out.println("There was a timeout. Try to solve this level again using another algorithm");
             else
                 System.out.println("No solution was found");

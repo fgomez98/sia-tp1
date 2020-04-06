@@ -79,9 +79,9 @@ public class App {
         Either<Node, Boolean> solution = solver.solve();
 
         if (solution.isValuePresent()) {
-            System.out.println("Solucion");
+            System.out.println("Solución encontrada");
             try {
-                solver.outputMovements(solution.getValue(), app.outFilename + app.algorithm.name() + "_" + app.heuristic.name() + ".txt");
+                solver.outputMovements(solution, app.outFilename + app.algorithm.name() + "_" + app.heuristic.name() + ".txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -9,4 +9,8 @@ public interface Storage {
     Node get();
 
     boolean isEmpty();
+
+    int frontierSize();
+
+    int exploredSize();
 }

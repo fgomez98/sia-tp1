@@ -10,6 +10,6 @@ public interface Solver {
 
     Either<Node,Boolean> solve();
 
-    void outputMovements(Node node, String fileName) throws IOException;
+    void outputMovements(Either<Node, Boolean> node, String fileName) throws IOException;
 
 }
