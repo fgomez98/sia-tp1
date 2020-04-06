@@ -1,6 +1,5 @@
 package itba.edu.ar.ai.storage;
 
-import itba.edu.ar.ai.Benchmarking;
 import itba.edu.ar.ai.Node;
 import itba.edu.ar.api.IDStorage;
 import itba.edu.ar.api.Storage;

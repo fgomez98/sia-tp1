@@ -80,16 +80,23 @@ public class App {
 
         if (solution.isValuePresent()) {
             System.out.println("Solución encontrada");
-            try {
-                solver.outputMovements(solution, app.outFilename + app.algorithm.name() + "_" + app.heuristic.name() + ".txt");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         } else {
             if(solution.getAlternative())
                 System.out.println("La aplicación llegó al timeout especificado. Intente correr con un timeout mas alto o intentá cambiar el algoritmo");
             else
                 System.out.println("La aplicación no encontró una solución");
+        }
+
+        try {
+            StringBuilder sb = new StringBuilder(app.outFilename);
+            sb.append(app.algorithm.name());
+            if (app.heuristic != null) {
+                sb.append("_").append(app.heuristic.name());
+            }
+            sb.append(".txt");
+            solver.outputMovements(solution, sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

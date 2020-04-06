@@ -44,6 +44,8 @@ public class SolverImpl implements Solver {
 
             /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
+                Benchmarking.nodesFrontier = frontier.frontierSize();
+                Benchmarking.nodesExplorados = frontier.exploredSize();
                 Benchmarking.end = System.currentTimeMillis();
                 return Either.value(node);
             }
@@ -60,13 +62,13 @@ public class SolverImpl implements Solver {
             } else {
                 explode(node);
             }
-            if ((System.currentTimeMillis() - Benchmarking.start) > timebreak) {
-                return Either.alternative(true);
-            }
         }
         Benchmarking.nodesFrontier = frontier.frontierSize();
         Benchmarking.nodesExplorados = frontier.exploredSize();
         Benchmarking.end = System.currentTimeMillis();
+        if ((System.currentTimeMillis() - Benchmarking.start) > timebreak) {
+            return Either.alternative(true);
+        }
         return Either.alternative(false);
     }
 
@@ -129,27 +131,30 @@ public class SolverImpl implements Solver {
     public void outputMovements(Either<Node, Boolean> either, String fileName) throws IOException {
         Writer writer = new FileWriter(fileName);
 
-        Node node = either.getValue();
-
         StringBuilder sb = new StringBuilder();
+
         sb.append("Algoritmo de Busqueda: ").append(this.algorithm.name()).append('\n');
+
         if (this.heuristic != null) {
             sb.append("Heuristica: ").append(this.heuristic.name()).append('\n');
         } else {
             sb.append("Heuristica: None").append('\n');
         }
+
         sb.append("Tiempo: ").append(Benchmarking.getSimTime()).append(" seg").append('\n');
 
         if (either.isValuePresent()) {
+            Node node = either.getValue();
             sb.append("Costo: ").append(node.getGn()).append('\n');
             sb.append("Depth: ").append(node.getDepth()).append('\n');
         }
 
         sb.append("Nodos explotados: ").append(Benchmarking.nodesExploted).append('\n');
-        sb.append("Nodos explorados: ").append(Benchmarking.nodesExplorados).append('\n');
+        sb.append("Nodos explorados (sin repetir): ").append(Benchmarking.nodesExplorados).append('\n');
         sb.append("Nodos frontera: ").append(Benchmarking.nodesFrontier).append('\n');
 
         if (either.isValuePresent()) {
+            Node node = either.getValue();
             sb.append("Movimientos: ");
             for (Direction movement : node.getMovements()) {
                 sb.append(movement.name()).append(", ");
@@ -163,6 +168,7 @@ public class SolverImpl implements Solver {
         writer.write(board.print(currentState));
 
         if (either.isValuePresent()) {
+            Node node = either.getValue();
             Queue<Direction> movements = node.getMovements();
             while (!movements.isEmpty()) {
                 Direction direction = movements.poll();
