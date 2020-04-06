@@ -30,6 +30,11 @@ public enum Heuristics {
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluatePythagorasPermutation;
         }
+    },GREEDY_ASSIGNMENT(){
+        @Override
+        public BiFunction<Board, State, Integer> getEvaluate() {
+            return Heuristics::evaluateGreedy;
+        }
     };
 
     /**
@@ -49,7 +54,9 @@ public enum Heuristics {
             for (Coordinate goal : board.getGoals()) {
                 minDistanceSum = Math.min(calculateManhattan(goal, box), minDistanceSum);
             }
-            ret += minDistanceSum;
+            if(!board.getGoals().contains(box))
+                ret += minDistanceSum + calculateManhattan(state.getPlayer(), box);
+//            ret += minDistanceSum;
         }
         return ret;
     }
@@ -110,7 +117,8 @@ public enum Heuristics {
             int sum = 0;
             for (int j = 0; j < boxesList.size(); j++) {
                 try {
-                    sum += calculateManhattan(boxesList.get(j),state.getPlayer());
+                    if(!board.getGoals().contains(boxesList.get(j)))
+                        sum += calculateManhattan(boxesList.get(j),state.getPlayer());
                     sum += boxPoints.get(boxesList.get(j)).get(goalsList.get(integers.get(j)));
                 } catch (NullPointerException e) {
                     sum += Integer.MAX_VALUE / state.getBoxes().size();
@@ -140,18 +148,55 @@ public enum Heuristics {
         for (List<Integer> integers : combination) {
             int sum = 0;
             for (int j = 0; j < boxes.size(); j++) {
-//                sum += calculateManhattan(boxes.get(j),state.getPlayer());
+                sum += calculateManhattan(boxes.get(j),state.getPlayer());
                 sum += calculateManhattan(boxes.get(j), goals.get(integers.get(j)));
             }
             ret = Math.min(ret, sum);
         }
-//        ret *= 100;
-//        int aux = Integer.MAX_VALUE;
-//        for (Coordinate box:state.getBoxes()) {
-//            aux = Math.min(aux,calculateManhattan(box,state.getPlayer()));
-//        }
-//
-//        return ret+aux;
+        return ret;
+    }
+
+    private static Integer evaluateGreedy(Board board, State state){
+        int ret = 0;
+        Set<Coordinate> assignedBoxes = new HashSet<>();
+        Set<Coordinate> assignedGoals = new HashSet<>();
+        Set<Pair<Coordinate,Coordinate>> matches = new HashSet<>();
+        PriorityQueue<Pair<Coordinate,Coordinate>> pq = new PriorityQueue<>(Comparator.comparingInt(o -> board.getBoxGoalPoints().get(o.getKey()).get(o.getValue())));
+        for (Coordinate box: state.getBoxes()) {
+            for (Coordinate goal: board.getGoals()) {
+                if (board.getBoxGoalPoints().get(box) == null){
+                    return Integer.MAX_VALUE;
+                }
+                if(board.getBoxGoalPoints().get(box).get(goal) != null){
+                    pq.offer(new Pair<>(box, goal));
+                }
+            }
+        }
+        while (!pq.isEmpty()){
+            Pair<Coordinate,Coordinate> boxGoal = pq.poll();
+            if(!assignedBoxes.contains(boxGoal.getKey()) && !assignedGoals.contains(boxGoal.getValue())){
+                assignedBoxes.add(boxGoal.getKey());
+                assignedGoals.add(boxGoal.getValue());
+                matches.add(boxGoal);
+                if(matches.size() == state.getBoxes().size()){
+                    break;
+                }
+            }
+        }
+        for (Coordinate box: state.getBoxes()) {
+            if(!assignedBoxes.contains(box)){
+                int aux = Integer.MAX_VALUE/state.getBoxes().size();
+                for (Map.Entry<Coordinate,Integer> goal: board.getBoxGoalPoints().get(box).entrySet()) {
+                    aux = Math.min(aux, goal.getValue());
+                }
+                ret += aux;
+            }
+        }
+        for (Pair<Coordinate,Coordinate> match: matches) {
+            ret += board.getBoxGoalPoints().get(match.getKey()).get(match.getValue());
+            if(!board.getGoals().contains(match.getKey()))
+                ret += calculateManhattan(state.getPlayer(), match.getKey());
+        }
         return ret;
     }
 

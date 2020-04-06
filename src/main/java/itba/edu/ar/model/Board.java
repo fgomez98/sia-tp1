@@ -57,16 +57,19 @@ public class Board {
             e.printStackTrace();
         }
 
-        board.combination = new LinkedList<>();
-        List<Integer> numbers = new ArrayList<>();
-        for (int i = 0; i < board.getGoals().size(); i++) {
-            numbers.add(i);
+
+        if(board.getGoals().size() < 5){
+            board.combination = new LinkedList<>();
+            List<Integer> numbers = new ArrayList<>();
+            for (int i = 0; i < board.getGoals().size(); i++) {
+                numbers.add(i);
+            }
+            permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
         }
-        permutationsOfIntegers(board.combination, new LinkedList<>(), numbers);
 
         board.rows = x;
         board.cols = yMax;
-        board.analyseBoard();
+        board.analyzeBoard();
         board.printPoints();
         return board;
     }
@@ -103,7 +106,7 @@ public class Board {
      * paredes) de cada posicion y lo guardo en una matriz que para cada caja, muestra el puntaje a cada goal.
      * Agrego ademas a la lista de deadboxes a todas las posiciones que no llego
      */
-    public void analyseBoard() {
+    public void analyzeBoard() {
 
         /* can not reach goal */
         Set<Coordinate> visited = new HashSet<>();
@@ -121,6 +124,11 @@ public class Board {
                 }
             }
         }
+//        for (Coordinate position : boxGoalPoints.keySet()){
+//            for (Coordinate goal : goals){
+//                boxGoalPoints.get(position).putIfAbsent(goal, Integer.MAX_VALUE/goals.size());
+//            }
+//        }
     }
 
     private boolean isCorner(Coordinate coord) {
