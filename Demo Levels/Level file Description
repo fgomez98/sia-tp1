@@ -1,0 +1,6 @@
+# -> wall
+. -> objective
+$ -> box
+* -> box over an objective tile
++ -> player over an objective tile
+@ -> player
