@@ -5,13 +5,13 @@ import itba.edu.ar.ai.SolverImpl;
 import itba.edu.ar.api.SearchAlgorithm;
 import itba.edu.ar.api.Solver;
 import itba.edu.ar.model.Board;
+import itba.edu.ar.model.Either;
 import itba.edu.ar.model.Heuristics;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static itba.edu.ar.api.SearchAlgorithm.*;
 
@@ -64,19 +64,32 @@ public class App {
 
         SearchAlgorithm.resetTree = app.resetTree;
 
-        Solver solver = new SolverImpl(board, app.algorithm, app.heuristic, app.timeLimit,!app.deadlocksOff);
+        if (board.getInitialState().getBoxes().size() >= 5) {
+            if (app.heuristic == Heuristics.MANHATTAN_OPT) {
+                System.out.println("Como el numero de cajas es mayor a 5, la heuristica se cambia a MANHATTAN");
+                app.heuristic = Heuristics.MANHATTAN;
+            } else if (app.heuristic == Heuristics.POINT_POSITION_OPT){
+                System.out.println("Como el numero de cajas es mayor a 5, la heuristica se cambia a POINT_POSITION");
+                app.heuristic = Heuristics.POINT_POSITION;
+            }
+        }
 
-        Optional<Node> solution = solver.solve();
+        Solver solver = new SolverImpl(board, app.algorithm, app.heuristic, app.timeLimit, !app.deadlocksOff);
 
-        if (solution.isPresent()) {
-            System.out.println("Solution");
+        Either<Node, Boolean> solution = solver.solve();
+
+        if (solution.isValuePresent()) {
+            System.out.println("Solucion");
             try {
-                solver.outputMovments(solution.get(), app.outFilename + app.algorithm.name() + "_" + app.heuristic.name() + ".txt");
+                solver.outputMovements(solution.getValue(), app.outFilename + app.algorithm.name() + "_" + app.heuristic.name() + ".txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("No solution");
+            if(solution.getAlternative())
+                System.out.println("La aplicación llegó al timeout especificado. Intente correr con un timeout mas alto o intentá cambiar el algoritmo");
+            else
+                System.out.println("La aplicación no encontró una solución");
         }
     }
 }
