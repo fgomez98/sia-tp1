@@ -1,10 +1,7 @@
 package itba.edu.ar.ai;
 
 import itba.edu.ar.api.*;
-import itba.edu.ar.model.Board;
-import itba.edu.ar.model.Direction;
-import itba.edu.ar.model.Heuristics;
-import itba.edu.ar.model.State;
+import itba.edu.ar.model.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,7 +28,7 @@ public class SolverImpl implements Solver {
     }
 
     @Override
-    public Optional<Node> solve() {
+    public Either<Node,Boolean> solve() {
         Benchmarking.start = System.currentTimeMillis();
         Node.Builder root = new Node.Builder(board.getInitialState()).withCost(0);
         if (heuristic != null) {
@@ -46,7 +43,7 @@ public class SolverImpl implements Solver {
             /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
                 Benchmarking.end = System.currentTimeMillis();
-                return Optional.of(node);
+                return Either.value(node);
             }
 
             /* Explotamos el nodo y generamos sus hijos */
@@ -61,9 +58,12 @@ public class SolverImpl implements Solver {
             } else {
                 explode(node);
             }
+            if((System.currentTimeMillis()-Benchmarking.start) > 10 * 60 * 1000){
+                return Either.alternative(true);
+            }
         }
         Benchmarking.end = System.currentTimeMillis();
-        return Optional.empty();
+        return Either.alternative(false);
     }
 
     /*
@@ -174,7 +174,7 @@ public class SolverImpl implements Solver {
         SolverImpl solver = new SolverImpl(board, A_STAR, heuristics,true);
 
 
-        Optional<Node> solution = solver.solve();
+        Either<Node,Boolean> solution = solver.solve();
 
         solution.ifPresent(sol -> {
             try {
@@ -184,13 +184,17 @@ public class SolverImpl implements Solver {
             }
         });
 
-        if (solution.isPresent()) {
+        if (solution.isValuePresent()) {
             System.out.println("Solution");
-            solver.printSolution(solution.get());
+            solver.printSolution(solution.getValue());
             System.out.println("nodes:" + Benchmarking.nodesExploted);
             System.out.println("time:" + Benchmarking.getSimTime());
         } else {
-            System.out.println("No solution");
+            if(solution.getAlternative())
+                System.out.println("There was a timeout. Try to solve this level again using another algorithm");
+            else
+                System.out.println("No solution was found");
+
         }
     }
 
