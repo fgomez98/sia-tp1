@@ -71,6 +71,7 @@ public class HPAStorage implements Storage {
             double exploredFn = nodeInExplored.getFnEvaluation();
             double currentFn = fn(node, w);
             if (currentFn < exploredFn || (currentFn == exploredFn) && node.getHn() < nodeInExplored.getHnEvaluation()) {
+                Benchmarking.nodesFrontier++;
                 priorityQueue.offer(node);
                 frontier.put(node.getState(), node);
             }
