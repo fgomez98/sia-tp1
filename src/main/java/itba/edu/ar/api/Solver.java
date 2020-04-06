@@ -1,14 +1,15 @@
 package itba.edu.ar.api;
 
 import itba.edu.ar.ai.Node;
+import itba.edu.ar.model.Either;
 
 import java.io.IOException;
 import java.util.Optional;
 
 public interface Solver {
 
-    Optional<Node> solve();
+    Either<Node,Boolean> solve();
 
-    void outputMovments(Node node, String fileName) throws IOException;
+    void outputMovements(Node node, String fileName) throws IOException;
 
 }

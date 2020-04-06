@@ -36,5 +36,4 @@ yarn.lock
 package-lock.json
 settings.js
 settings-*
-
-./src/main/resources/Solutions/*
+src/main/resources/Solutions

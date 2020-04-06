@@ -1,15 +1,11 @@
 package itba.edu.ar.ai;
 
 import itba.edu.ar.api.*;
-import itba.edu.ar.model.Board;
-import itba.edu.ar.model.Direction;
-import itba.edu.ar.model.Heuristics;
-import itba.edu.ar.model.State;
+import itba.edu.ar.model.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Optional;
 import java.util.Queue;
 
 import static itba.edu.ar.api.SearchAlgorithm.*;
@@ -33,7 +29,7 @@ public class SolverImpl implements Solver {
     }
 
     @Override
-    public Optional<Node> solve() {
+    public Either<Node,Boolean> solve() {
         Benchmarking.start = System.currentTimeMillis();
         Node.Builder root = new Node.Builder(board.getInitialState()).withCost(0);
         if (heuristic != null) {
@@ -48,7 +44,7 @@ public class SolverImpl implements Solver {
             /* Si es el estado es goal, encontramos una solucion conforme a nuestro algoritmo */
             if (board.isComplete(node.getState())) {
                 Benchmarking.end = System.currentTimeMillis();
-                return Optional.of(node);
+                return Either.value(node);
             }
 
             /* Explotamos el nodo y generamos sus hijos */
@@ -63,9 +59,12 @@ public class SolverImpl implements Solver {
             } else {
                 explode(node);
             }
+            if((System.currentTimeMillis()-Benchmarking.start) > timebreak){
+                return Either.alternative(true);
+            }
         }
         Benchmarking.end = System.currentTimeMillis();
-        return Optional.empty();
+        return Either.alternative(false);
     }
 
     /*
@@ -121,25 +120,25 @@ public class SolverImpl implements Solver {
         System.out.println(colorReset);
     }
 
-    public void outputMovments(Node node, String fileName) throws IOException {
-        Writer writer = new FileWriter(fileName.toString());
+    public void outputMovements(Node node, String fileName) throws IOException {
+        Writer writer = new FileWriter(fileName);
 
         Queue<Direction> movements = node.getMovements();
         State currentState = board.getInitialState();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Search Algorithm: ").append(this.algorithm.name()).append('\n');
+        sb.append("Algoritmo de Busqueda: ").append(this.algorithm.name()).append('\n');
         if (this.heuristic != null) {
-            sb.append("Heuristic: ").append(this.heuristic.name()).append('\n');
+            sb.append("Heuristica: ").append(this.heuristic.name()).append('\n');
         } else {
-            sb.append("Heuristic: None").append('\n');
+            sb.append("Heuristica: None").append('\n');
         }
-        sb.append("Time: ").append(Benchmarking.getSimTime()).append(" sec").append('\n');
-        sb.append("Cost: ").append(node.getGn()).append('\n');
+        sb.append("Tiempo: ").append(Benchmarking.getSimTime()).append(" seg").append('\n');
+        sb.append("Costo: ").append(node.getGn()).append('\n');
         sb.append("Depth: ").append(node.getDepth()).append('\n');
-        sb.append("Nodes exploted: ").append(Benchmarking.nodesExploted).append('\n');
-        sb.append("Nodes fronteer: ").append(Benchmarking.nodesFrontier).append('\n');
-        sb.append("Movements: ");
+        sb.append("Nodos explotados: ").append(Benchmarking.nodesExploted).append('\n');
+        sb.append("Nodos frontera: ").append(Benchmarking.nodesFrontier).append('\n');
+        sb.append("Movimientos: ");
         for (Direction movement : node.getMovements()) {
             sb.append(movement.name()).append(", ");
         }
@@ -160,12 +159,12 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 3");
+        Board board = Board.from("./src/main/resources/Levels/Level 12");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        Heuristics heuristics = Heuristics.GREEDY_ASSIGNMENT;
+        Heuristics heuristics = Heuristics.MANHATTAN;
         if (board.getInitialState().getBoxes().size() >= 5) {
             if (heuristics == Heuristics.MANHATTAN_OPT)
                 heuristics = Heuristics.MANHATTAN;
@@ -176,23 +175,27 @@ public class SolverImpl implements Solver {
         SolverImpl solver = new SolverImpl(board, A_STAR, heuristics, Long.MAX_VALUE, true);
 
 
-        Optional<Node> solution = solver.solve();
+        Either<Node,Boolean> solution = solver.solve();
 
         solution.ifPresent(sol -> {
             try {
-                solver.outputMovments(sol, "./src/main/resources/Solutions/" + solver.algorithm.name() + "_" + solver.heuristic.name() + ".txt");
+                solver.outputMovements(sol, "./src/main/resources/Solutions/" + solver.algorithm.name() + "_" + solver.heuristic.name() + ".txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
-        if (solution.isPresent()) {
+        if (solution.isValuePresent()) {
             System.out.println("Solution");
-            solver.printSolution(solution.get());
+            solver.printSolution(solution.getValue());
             System.out.println("nodes:" + Benchmarking.nodesExploted);
             System.out.println("time:" + Benchmarking.getSimTime());
         } else {
-            System.out.println("No solution");
+            if(solution.getAlternative())
+                System.out.println("There was a timeout. Try to solve this level again using another algorithm");
+            else
+                System.out.println("No solution was found");
+
         }
     }
 
