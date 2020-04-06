@@ -2,4 +2,5 @@
 . -> objective
 $ -> box
 * -> box over an objective tile
-@ -> me
++ -> player over an objective tile
+@ -> player

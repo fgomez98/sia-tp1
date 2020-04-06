@@ -56,6 +56,7 @@ public enum Heuristics {
             }
             if(!board.getGoals().contains(box))
                 ret += minDistanceSum + calculateManhattan(state.getPlayer(), box);
+//            ret += minDistanceSum;
         }
         return ret;
     }

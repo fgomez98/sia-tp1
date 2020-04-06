@@ -8,19 +8,19 @@ public class IDAStarStorage extends IDDFSStorage implements Storage, IDStorage {
 
     private int nextLimit;
 
-    private IDAStarStorage() {
-        super();
+    private IDAStarStorage(boolean resetTree) {
+        super(resetTree);
         nextLimit = -1;
     }
 
-    public static IDAStarStorage getStorage() {
-        return new IDAStarStorage();
+    public static IDAStarStorage getStorage(boolean resetTree) {
+        return new IDAStarStorage(resetTree);
     }
 
     @Override
     public void add(Node node) {
         super.add(node);
-        int fn = node.getEval();
+        int fn = node.getHn();
         nextLimit = (nextLimit == -1 || fn < nextLimit) ? fn : nextLimit;
     }
 

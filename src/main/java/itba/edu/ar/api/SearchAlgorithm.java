@@ -32,14 +32,16 @@ public enum SearchAlgorithm {
     }, IDDFS {
         @Override
         public Storage getStorage() {
-            return IDDFSStorage.getStorage();
+            return IDDFSStorage.getStorage(resetTree);
         }
     }, IDA_STAR {
         @Override
         public Storage getStorage() {
-            return IDDFSStorage.getStorage();
+            return IDDFSStorage.getStorage(resetTree);
         }
     };
+
+    public static boolean resetTree = false;
 
     public abstract Storage getStorage();
 }

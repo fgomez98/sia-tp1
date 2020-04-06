@@ -36,8 +36,8 @@ public class State {
 
         State state = (State) o;
 
-        if (!boxes.equals(state.boxes)) return false;
-        return player.equals(state.player);
+        if (boxes != null ? !boxes.equals(state.boxes) : state.boxes != null) return false;
+        return player != null ? player.equals(state.player) : state.player == null;
     }
 
     @Override
@@ -47,5 +47,8 @@ public class State {
             result = 31 * result + box.hashCode();
         }
         return result;
+//        int result = boxes != null ? boxes.hashCode() : 0;
+//        result = 31 * result + (player != null ? player.hashCode() : 0);
+//        return result;
     }
 }

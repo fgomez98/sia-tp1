@@ -26,13 +26,14 @@ public class DFSStorage implements Storage {
     @Override
     public void add(Node node) {
         if (!explored.contains(node.getState())) {
-            Benchmarking.nodesFronteer++;
+            Benchmarking.nodesFrontier++;
             stack.push(node);
         }
     }
 
     @Override
     public Node get() {
+        Benchmarking.nodesFrontier--;
         Node node = stack.pop();
         explored.add(node.getState());
         return node;

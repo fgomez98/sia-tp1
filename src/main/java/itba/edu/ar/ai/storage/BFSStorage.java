@@ -24,13 +24,14 @@ public class BFSStorage implements Storage {
     @Override
     public void add(Node node) {
         if (!explored.contains(node.getState())) {
-            Benchmarking.nodesFronteer++;
+            Benchmarking.nodesFrontier++;
             queue.add(node);
         }
     }
 
     @Override
     public Node get() {
+        Benchmarking.nodesFrontier--;
         Node node = queue.poll();
         explored.add(node.getState());
         return node;

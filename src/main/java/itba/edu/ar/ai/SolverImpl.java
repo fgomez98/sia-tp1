@@ -20,12 +20,14 @@ public class SolverImpl implements Solver {
     private Storage frontier;
     private SearchAlgorithm algorithm;
     private Heuristics heuristic;
+    private boolean deadlocks;
 
-    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic) {
+    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic, boolean deadlocks) {
         this.board = board;
         this.frontier = algorithm.getStorage();
         this.algorithm = algorithm;
         this.heuristic = heuristic;
+        this.deadlocks = deadlocks;
     }
 
     @Override
@@ -83,12 +85,12 @@ public class SolverImpl implements Solver {
         Caso ciclos, no queda otra que revisar la branch
     */
     private void explode(Node node) {
-        for (Direction direction : board.getPosibleMovements(node.getState())) {
+        for (Direction direction : board.getPosibleMovements(node.getState(), deadlocks)) {
             State childState = board.move(node.getState(), direction);
             Node.Builder child = new Node.Builder(childState)
                     .withParent(node)
                     .withMovement(direction)
-                    .withCost(node.getCost() + Cost.getCost(childState));
+                    .withCost(node.getGn() + Cost.getCost(childState));
             if (heuristic != null) {
                 child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState));
             }
@@ -131,10 +133,10 @@ public class SolverImpl implements Solver {
             sb.append("Heuristic: None").append('\n');
         }
         sb.append("Time: ").append(Benchmarking.getSimTime()).append(" sec").append('\n');
-        sb.append("Cost: ").append(node.getCost()).append('\n');
+        sb.append("Cost: ").append(node.getGn()).append('\n');
         sb.append("Depth: ").append(node.getDepth()).append('\n');
         sb.append("Nodes exploted: ").append(Benchmarking.nodesExploted).append('\n');
-        sb.append("Nodes fronteer: ").append(Benchmarking.nodesFronteer).append('\n');
+        sb.append("Nodes fronteer: ").append(Benchmarking.nodesFrontier).append('\n');
         sb.append("Movements: ");
         for (Direction movement : node.getMovements()) {
             sb.append(movement.name()).append(", ");
@@ -161,7 +163,6 @@ public class SolverImpl implements Solver {
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-
         Heuristics heuristics = Heuristics.GREEDY_ASSIGNMENT;
         if(board.getInitialState().getBoxes().size() >= 5){
             if (heuristics == Heuristics.MANHATTAN_OPT)
@@ -170,7 +171,8 @@ public class SolverImpl implements Solver {
                 heuristics = Heuristics.POINT_POSITION;
         }
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics);
+        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics,true);
+
 
         Optional<Node> solution = solver.solve();
 

@@ -92,6 +92,10 @@ public class Board {
                 boxesInitial.add(Coordinate.from(x, y));
                 goals.add(Coordinate.from(x, y));
                 break;
+            case GOAL_PLAYER:
+                goals.add(Coordinate.from(x, y));
+                playerInitial = Coordinate.from(x, y);
+                break;
             default:
                 break;
         }
@@ -232,9 +236,9 @@ public class Board {
         return false;
     }
 
-    public List<Direction> getPosibleMovements(State state) {
+    public List<Direction> getPosibleMovements(State state, boolean deadlocks) {
         List<Direction> movements = new LinkedList<>();
-        if (isDeadlock(state)) {
+        if (deadlocks && isDeadlock(state)) {
             return movements;
         }
         for (Direction d : Direction.directions) {
@@ -308,6 +312,10 @@ public class Board {
                     }
                     sb.append(BOX.toString());
                 } else if (state.getPlayer().equals(coord)) {
+                    if (goals.contains(coord)) {
+                        sb.append(GOAL_PLAYER.toString());
+                        continue;
+                    }
                     sb.append(PLAYER.toString());
                 } else if (goals.contains(coord)) {
                     sb.append(GOAL.toString());
@@ -385,7 +393,7 @@ public class Board {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 11");
+        Board board = Board.from("./src/main/resources/Levels/Level 12");
         State state = board.getInitialState();
 
         System.out.println("Type Up, Down, Right, Left to move sokoban");
@@ -394,7 +402,7 @@ public class Board {
             System.out.println(board.print(state));
 
             StringBuilder sb = new StringBuilder("Posible movements: ");
-            List<Direction> posibleMovments = board.getPosibleMovements(state);
+            List<Direction> posibleMovments = board.getPosibleMovements(state, true);
 
             if (posibleMovments.isEmpty()) {
                 System.out.println("Your deadlock...");

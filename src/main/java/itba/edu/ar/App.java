@@ -17,20 +17,27 @@ import static itba.edu.ar.api.SearchAlgorithm.*;
 
 public class App {
 
-    @Option(name = "-Da", usage = "Algoritmo con el cual se realizara la busqueda", required = true)
+    @Option(name = "-algorithm", usage = "Algoritmo con el cual se realizara la busqueda", required = true)
     private SearchAlgorithm algorithm;
 
-    @Option(name = "-Dl", usage = "Archivo con la descripcion del nivel", required = true)
+    @Option(name = "-level", usage = "Archivo con la descripcion del nivel", required = true)
     private String levelFilename;
 
-    @Option(name = "-Dh", usage = "Heuristica a usar")
+    @Option(name = "-heuristic", usage = "Heuristica a usar")
     private Heuristics heuristic;
 
-    @Option(name = "-Dout", usage = "Directorio donde se guardara en un archivo .txt los resultados")
+    @Option(name = "-out", usage = "Directorio donde se guardara en un archivo .txt los resultados")
     private String outFilename = "./";
+
+    @Option(name = "-reset-tree", usage = "Reseteo del arbol en algoritmos Iterative Deepening")
+    private boolean resetTree = false;
+
+    @Option(name = "-deadlocks-off", usage = "Apaga chequeo de deadlocks")
+    private boolean deadlocksOff = false;
 
     @Option(name = "-Dt", usage = "Tiempo limite a correr")
     private long timeLimit;
+
     /*
         TODO: timepo limite de corte
      */
@@ -55,7 +62,9 @@ public class App {
 
         Board board = Board.from(app.levelFilename);
 
-        Solver solver = new SolverImpl(board, app.algorithm, app.heuristic);
+        SearchAlgorithm.resetTree = app.resetTree;
+
+        Solver solver = new SolverImpl(board, app.algorithm, app.heuristic, !app.deadlocksOff);
 
         Optional<Node> solution = solver.solve();
 
