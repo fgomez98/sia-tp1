@@ -156,12 +156,21 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 12");
+        Board board = Board.from("./src/main/resources/Levels/Level 3");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.MANHATTAN);
+
+        Heuristics heuristics = Heuristics.GREEDY_ASSIGNMENT;
+        if(board.getInitialState().getBoxes().size() >= 5){
+            if (heuristics == Heuristics.MANHATTAN_OPT)
+                heuristics = Heuristics.MANHATTAN;
+            else if(heuristics == Heuristics.POINT_POSITION_OPT)
+                heuristics = Heuristics.POINT_POSITION;
+        }
+
+        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics);
 
         Optional<Node> solution = solver.solve();
 

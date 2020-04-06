@@ -1,6 +1,6 @@
 Search Algorithm: A_STAR
 Heuristic: MANHATTAN
-Time: 15.224 sec
+Time: 11.136 sec
 Cost: 129
 Depth: 129
 Nodes exploted: 1871903
