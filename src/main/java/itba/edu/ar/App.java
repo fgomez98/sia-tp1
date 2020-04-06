@@ -35,12 +35,12 @@ public class App {
     @Option(name = "-deadlocks-off", usage = "Apaga chequeo de deadlocks")
     private boolean deadlocksOff = false;
 
-    @Option(name = "-Dt", usage = "Tiempo limite a correr")
-    private long timeLimit;
+    @Option(name = "-time", usage = "Tiempo limite a correr en segundos")
+    public void setTimeLimit(long timeLimit) {
+        this.timeLimit = timeLimit * 1000; /* A milisegundos */
+    }
 
-    /*
-        TODO: timepo limite de corte
-     */
+    private long timeLimit = Long.MAX_VALUE;
 
     public static void main(String[] args) {
         App app = new App();
@@ -64,7 +64,7 @@ public class App {
 
         SearchAlgorithm.resetTree = app.resetTree;
 
-        Solver solver = new SolverImpl(board, app.algorithm, app.heuristic, !app.deadlocksOff);
+        Solver solver = new SolverImpl(board, app.algorithm, app.heuristic, app.timeLimit,!app.deadlocksOff);
 
         Optional<Node> solution = solver.solve();
 

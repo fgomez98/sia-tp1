@@ -21,13 +21,15 @@ public class SolverImpl implements Solver {
     private SearchAlgorithm algorithm;
     private Heuristics heuristic;
     private boolean deadlocks;
+    private long timebreak;
 
-    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic, boolean deadlocks) {
+    public SolverImpl(Board board, SearchAlgorithm algorithm, Heuristics heuristic, long timebreak, boolean deadlocks) {
         this.board = board;
         this.frontier = algorithm.getStorage();
         this.algorithm = algorithm;
         this.heuristic = heuristic;
         this.deadlocks = deadlocks;
+        this.timebreak = timebreak;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class SolverImpl implements Solver {
         }
         frontier.add(root.build());
 
-        while (!frontier.isEmpty()) {
+        while (!frontier.isEmpty() && (System.currentTimeMillis() - Benchmarking.start) < timebreak) {
             /* Quitamos un nodo de la frontera */
             Node node = frontier.get();
 
@@ -163,7 +165,7 @@ public class SolverImpl implements Solver {
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.MANHATTAN, true);
+        SolverImpl solver = new SolverImpl(board, A_STAR, Heuristics.MANHATTAN, Long.MAX_VALUE,true);
 
         Optional<Node> solution = solver.solve();
 
