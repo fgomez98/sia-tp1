@@ -6,6 +6,7 @@ import itba.edu.ar.model.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 import java.util.Queue;
 
 import static itba.edu.ar.api.SearchAlgorithm.*;
@@ -86,7 +87,11 @@ public class SolverImpl implements Solver {
         Caso ciclos, no queda otra que revisar la branch
     */
     private void explode(Node node) {
-        for (Direction direction : board.getPosibleMovements(node.getState(), deadlocks)) {
+        List<Direction> movments = board.getPosibleMovements(node.getState(), deadlocks);
+        if (!movments.isEmpty()) {
+            Benchmarking.nodesExploted++;
+        }
+        for (Direction direction : movments) {
             State childState = board.move(node.getState(), direction);
             Node.Builder child = new Node.Builder(childState)
                     .withParent(node)
@@ -95,7 +100,6 @@ public class SolverImpl implements Solver {
             if (heuristic != null) {
                 child = child.withEvaluation(heuristic.getEvaluate().apply(board, childState));
             }
-            Benchmarking.nodesExploted++;
             frontier.add(child.build());
         }
     }
