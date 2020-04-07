@@ -20,17 +20,17 @@ public enum Heuristics {
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluatePointPosition;
         }
-    },POINT_POSITION(){
+    }, POINT_POSITION() {
         @Override
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluatePointsNoPermutation;
         }
-    }, PYTHAGORAS(){
+    }, PYTHAGORAS() {
         @Override
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluatePythagorasPermutation;
         }
-    },GREEDY_ASSIGNMENT(){
+    }, GREEDY_ASSIGNMENT() {
         @Override
         public BiFunction<Board, State, Integer> getEvaluate() {
             return Heuristics::evaluateGreedy;
@@ -59,7 +59,7 @@ public enum Heuristics {
         return ret;
     }
 
-    private static int evaluatePythagorasPermutation(Board board,State state){
+    private static int evaluatePythagorasPermutation(Board board, State state) {
         int ret = 0;
 
         for (Coordinate box : state.getBoxes()) {
@@ -85,7 +85,7 @@ public enum Heuristics {
             for (Coordinate goal : board.getGoals()) {
                 try {
                     minDistanceSum = Math.min(board.getBoxGoalPoints().get(box).get(goal), minDistanceSum);
-                }catch (NullPointerException ignored){
+                } catch (NullPointerException ignored) {
                 }
             }
             ret += minDistanceSum;
@@ -115,8 +115,8 @@ public enum Heuristics {
             int sum = 0;
             for (int j = 0; j < boxesList.size(); j++) {
                 try {
-                    if(!board.getGoals().contains(boxesList.get(j)))
-                        sum += calculateManhattan(boxesList.get(j),state.getPlayer());
+                    if (!board.getGoals().contains(boxesList.get(j)))
+                        sum += calculateManhattan(boxesList.get(j), state.getPlayer());
                     sum += boxPoints.get(boxesList.get(j)).get(goalsList.get(integers.get(j)));
                 } catch (NullPointerException e) {
                     sum += Integer.MAX_VALUE / state.getBoxes().size();
@@ -146,7 +146,7 @@ public enum Heuristics {
         for (List<Integer> integers : combination) {
             int sum = 0;
             for (int j = 0; j < boxes.size(); j++) {
-                sum += calculateManhattan(boxes.get(j),state.getPlayer());
+                sum += calculateManhattan(boxes.get(j), state.getPlayer());
                 sum += calculateManhattan(boxes.get(j), goals.get(integers.get(j)));
             }
             ret = Math.min(ret, sum);
@@ -154,45 +154,45 @@ public enum Heuristics {
         return ret;
     }
 
-    private static Integer evaluateGreedy(Board board, State state){
+    private static Integer evaluateGreedy(Board board, State state) {
         int ret = 0;
         Set<Coordinate> assignedBoxes = new HashSet<>();
         Set<Coordinate> assignedGoals = new HashSet<>();
-        Set<Pair<Coordinate,Coordinate>> matches = new HashSet<>();
-        PriorityQueue<Pair<Coordinate,Coordinate>> pq = new PriorityQueue<>(Comparator.comparingInt(o -> board.getBoxGoalPoints().get(o.getKey()).get(o.getValue())));
-        for (Coordinate box: state.getBoxes()) {
-            for (Coordinate goal: board.getGoals()) {
-                if (board.getBoxGoalPoints().get(box) == null){
+        Set<Pair<Coordinate, Coordinate>> matches = new HashSet<>();
+        PriorityQueue<Pair<Coordinate, Coordinate>> pq = new PriorityQueue<>(Comparator.comparingInt(o -> board.getBoxGoalPoints().get(o.getKey()).get(o.getValue())));
+        for (Coordinate box : state.getBoxes()) {
+            for (Coordinate goal : board.getGoals()) {
+                if (board.getBoxGoalPoints().get(box) == null) {
                     return Integer.MAX_VALUE;
                 }
-                if(board.getBoxGoalPoints().get(box).get(goal) != null){
+                if (board.getBoxGoalPoints().get(box).get(goal) != null) {
                     pq.offer(new Pair<>(box, goal));
                 }
             }
         }
-        while (!pq.isEmpty()){
-            Pair<Coordinate,Coordinate> boxGoal = pq.poll();
-            if(!assignedBoxes.contains(boxGoal.getKey()) && !assignedGoals.contains(boxGoal.getValue())){
+        while (!pq.isEmpty()) {
+            Pair<Coordinate, Coordinate> boxGoal = pq.poll();
+            if (!assignedBoxes.contains(boxGoal.getKey()) && !assignedGoals.contains(boxGoal.getValue())) {
                 assignedBoxes.add(boxGoal.getKey());
                 assignedGoals.add(boxGoal.getValue());
                 matches.add(boxGoal);
-                if(matches.size() == state.getBoxes().size()){
+                if (matches.size() == state.getBoxes().size()) {
                     break;
                 }
             }
         }
-        for (Coordinate box: state.getBoxes()) {
-            if(!assignedBoxes.contains(box)){
-                int aux = Integer.MAX_VALUE/state.getBoxes().size();
-                for (Map.Entry<Coordinate,Integer> goal: board.getBoxGoalPoints().get(box).entrySet()) {
+        for (Coordinate box : state.getBoxes()) {
+            if (!assignedBoxes.contains(box)) {
+                int aux = Integer.MAX_VALUE / state.getBoxes().size();
+                for (Map.Entry<Coordinate, Integer> goal : board.getBoxGoalPoints().get(box).entrySet()) {
                     aux = Math.min(aux, goal.getValue());
                 }
                 ret += aux;
             }
         }
-        for (Pair<Coordinate,Coordinate> match: matches) {
+        for (Pair<Coordinate, Coordinate> match : matches) {
             ret += board.getBoxGoalPoints().get(match.getKey()).get(match.getValue());
-            if(!board.getGoals().contains(match.getKey()))
+            if (!board.getGoals().contains(match.getKey()))
                 ret += calculateManhattan(state.getPlayer(), match.getKey());
         }
         return ret;
@@ -204,8 +204,9 @@ public enum Heuristics {
         sum += Math.abs(goals.getY() - boxes.getY());
         return sum;
     }
+
     private static int calculatePythagoras(Coordinate goals, Coordinate boxes) {
-        return (int) Math.sqrt(Math.pow(goals.getX() - boxes.getX(),2) + Math.pow(goals.getY() - boxes.getY(),2));
+        return (int) Math.sqrt(Math.pow(goals.getX() - boxes.getX(), 2) + Math.pow(goals.getY() - boxes.getY(), 2));
     }
 
     public abstract BiFunction<Board, State, Integer> getEvaluate();

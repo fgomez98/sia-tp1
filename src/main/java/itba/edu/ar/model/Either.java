@@ -12,12 +12,12 @@ public class Either<T, S> {
         this.alternative = alternative;
     }
 
-    public static <T, S> Either<T,S> value(final T value) {
-        return new Either<T,S>(value, null);
+    public static <T, S> Either<T, S> value(final T value) {
+        return new Either<T, S>(value, null);
     }
 
-    public static <T, S> Either<T,S> alternative(final S alternative) {
-        return new Either<T,S>(null, alternative);
+    public static <T, S> Either<T, S> alternative(final S alternative) {
+        return new Either<T, S>(null, alternative);
     }
 
     public T getValue() {

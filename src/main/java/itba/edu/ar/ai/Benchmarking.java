@@ -9,6 +9,6 @@ public class Benchmarking {
     public static long end = 0;
 
     public static double getSimTime() {
-        return  (start > 0 && end > start) ? (end - start) / 1000.0 : -1.0;
+        return (start > 0 && end > start) ? (end - start) / 1000.0 : -1.0;
     }
 }

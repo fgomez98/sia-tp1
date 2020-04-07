@@ -58,7 +58,7 @@ public class Board {
         }
 
 
-        if(board.getGoals().size() < 5){
+        if (board.getGoals().size() < 5) {
             board.combination = new LinkedList<>();
             List<Integer> numbers = new ArrayList<>();
             for (int i = 0; i < board.getGoals().size(); i++) {
@@ -161,14 +161,14 @@ public class Board {
                 Coordinate personPos = position.move(2, d);
                 if (inBounds(boxPos) && inBounds(personPos)
                         && !walls.contains(boxPos) && !walls.contains(personPos)) {
-                    if(!passedPlaces.contains(boxPos) || (boxGoalPoints.get(boxPos).get(goal) > boxGoalPoints.get(position).get(goal)+1)){
-                        if(!passedPlaces.contains(boxPos)){
+                    if (!passedPlaces.contains(boxPos) || (boxGoalPoints.get(boxPos).get(goal) > boxGoalPoints.get(position).get(goal) + 1)) {
+                        if (!passedPlaces.contains(boxPos)) {
                             passedPlaces.add(boxPos);
                             visited.add(boxPos);
                         }
                         int points = boxGoalPoints.get(position).get(goal);
                         boxGoalPoints.computeIfAbsent(boxPos, k -> new HashMap<>());
-                        boxGoalPoints.get(boxPos).put(goal,points+1);
+                        boxGoalPoints.get(boxPos).put(goal, points + 1);
                         queue.offer(boxPos);
                         passedPlaces.add(boxPos);
                     }
@@ -330,7 +330,7 @@ public class Board {
 
     private String printPoints() {
         StringBuilder sb = new StringBuilder();
-        for (Coordinate goal:goals){
+        for (Coordinate goal : goals) {
             sb.append("goal: ").append(goal.toString()).append('\n');
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -339,16 +339,16 @@ public class Board {
                     if (walls.contains(coord)) {
                         sb.append(WALL.toString());
                         flag = false;
-                    }else if(boxGoalPoints.get(coord) != null){
-                        if(boxGoalPoints.get(coord).get(goal) != null){
+                    } else if (boxGoalPoints.get(coord) != null) {
+                        if (boxGoalPoints.get(coord).get(goal) != null) {
                             String a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
                             sb.append(a.toCharArray()[boxGoalPoints.get(coord).get(goal)]);
-                        }else{
+                        } else {
                             sb.append(' ');
                         }
                         flag = false;
                     }
-                    if(flag && !walls.contains(coord) &&(boxGoalPoints.get(coord) == null || boxGoalPoints.get(coord).get(goal) != null)){
+                    if (flag && !walls.contains(coord) && (boxGoalPoints.get(coord) == null || boxGoalPoints.get(coord).get(goal) != null)) {
                         sb.append(' ');
                     }
                 }
