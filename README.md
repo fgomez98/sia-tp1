@@ -28,3 +28,14 @@ Posibles parametros:
  * -reset-tree                            : Reseteo del arbol en algoritmos Iterative Deepening (default: false)
  * -time                                  : Tiempo limite a correr en segundos
  * -deadlocks-off                         : Apaga chequeo de deadlocks (default: false)
+ 
+ #### Ejemplos Oportunos
+ ###### Ejemplo 1
+ ```
+ ./sokoban-solver.sh -algorithm=DFS -level=./Demo Levels/Level 1
+ ```
+ ###### Ejemplo 2
+ ```
+ ./sokoban-solver.sh -algorithm=A_STAR -level=./Demo Levels/Level 2 -heuristic=MANHATTAN
+```
+ 

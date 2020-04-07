@@ -71,6 +71,9 @@ public class IDDFSStorage implements Storage, IDStorage {
         limit++;
         primaryStack = secondaryStack;
         secondaryStack = new Stack<>();
+        if (resetTree) {
+            explored = new HashMap<>();
+        }
         return limit;
     }
 

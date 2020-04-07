@@ -10,6 +10,7 @@ import itba.edu.ar.model.Heuristics;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
 import java.io.IOException;
 
@@ -20,14 +21,32 @@ public class App {
     @Option(name = "-algorithm", usage = "Algoritmo con el cual se realizara la busqueda", required = true)
     private SearchAlgorithm algorithm;
 
-    @Option(name = "-level", usage = "Archivo con la descripcion del nivel", required = true)
-    private String levelFilename;
+    @Option(name = "-level", usage = "Archivo con la descripcion del nivel", required = true, handler = StringArrayOptionHandler.class)
+    private String[] levelFilename;
+
+    public String getLevelFilename() {
+        StringBuilder sb = new StringBuilder();
+        for (String s : levelFilename) {
+            sb.append(s.replaceAll("\\\\", ""));
+            sb.append(" ");
+        }
+        return sb.toString().trim();
+    }
 
     @Option(name = "-heuristic", usage = "Heuristica a usar")
     private Heuristics heuristic;
 
-    @Option(name = "-out", usage = "Directorio donde se guardara en un archivo .txt los resultados")
-    private String outFilename = "./";
+    @Option(name = "-out", usage = "Directorio donde se guardara en un archivo .txt los resultados", handler = StringArrayOptionHandler.class)
+    private String[] outFilename = {"./"};
+
+    public String getOutFilename() {
+        StringBuilder sb = new StringBuilder();
+        for (String s : outFilename) {
+            sb.append(s.replaceAll("\\\\", ""));
+            sb.append(" ");
+        }
+        return sb.toString().trim();
+    }
 
     @Option(name = "-reset-tree", usage = "Reseteo del arbol en algoritmos Iterative Deepening")
     private boolean resetTree = false;
@@ -60,7 +79,7 @@ public class App {
             System.exit(1);
         }
 
-        Board board = Board.from(app.levelFilename);
+        Board board = Board.from(app.getLevelFilename());
 
         SearchAlgorithm.resetTree = app.resetTree;
 
@@ -68,7 +87,7 @@ public class App {
             if (app.heuristic == Heuristics.MANHATTAN_OPT) {
                 System.out.println("Como el numero de cajas es mayor a 5, la heuristica se cambia a MANHATTAN");
                 app.heuristic = Heuristics.MANHATTAN;
-            } else if (app.heuristic == Heuristics.POINT_POSITION_OPT){
+            } else if (app.heuristic == Heuristics.POINT_POSITION_OPT) {
                 System.out.println("Como el numero de cajas es mayor a 5, la heuristica se cambia a POINT_POSITION");
                 app.heuristic = Heuristics.POINT_POSITION;
             }
@@ -81,15 +100,15 @@ public class App {
         if (solution.isValuePresent()) {
             System.out.println("Solución encontrada");
         } else {
-            if(solution.getAlternative())
+            if (solution.getAlternative())
                 System.out.println("La aplicación llegó al timeout especificado. Intente correr con un timeout mas alto o intentá cambiar el algoritmo");
             else
                 System.out.println("La aplicación no encontró una solución");
         }
 
         try {
-            StringBuilder sb = new StringBuilder(app.outFilename);
-            sb.append(app.algorithm.name());
+            StringBuilder sb = new StringBuilder(app.getOutFilename());
+            sb.append('/').append(app.algorithm.name());
             if (app.heuristic != null) {
                 sb.append("_").append(app.heuristic.name());
             }

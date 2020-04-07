@@ -58,6 +58,9 @@ public class SolverImpl implements Solver {
                 /* Si estamos en IDDFS y la frontera esta vacia incrementamos el limite y hacemos reset */
                 if (frontier.isEmpty()) {
                     ((IDStorage) frontier).deepend();
+                    if (resetTree) {
+                        frontier.add(root.build());
+                    }
                 }
             } else {
                 explode(node);
