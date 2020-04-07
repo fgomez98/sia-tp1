@@ -186,20 +186,20 @@ public class SolverImpl implements Solver {
     }
 
     public static void main(String[] args) {
-        Board board = Board.from("./src/main/resources/Levels/Level 12");
+        Board board = Board.from("./src/main/resources/Levels/Level 9");
 
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        Heuristics heuristics = Heuristics.MANHATTAN;
-        if (board.getInitialState().getBoxes().size() >= 5) {
+        Heuristics heuristics = Heuristics.POINT_POSITION ;
+        if (board.getInitialState().getBoxes().size() > 5) {
             if (heuristics == Heuristics.MANHATTAN_OPT)
                 heuristics = Heuristics.MANHATTAN;
             else if (heuristics == Heuristics.POINT_POSITION_OPT)
                 heuristics = Heuristics.POINT_POSITION;
         }
 
-        SolverImpl solver = new SolverImpl(board, A_STAR, heuristics, Long.MAX_VALUE, true);
+        SolverImpl solver = new SolverImpl(board, IDA_STAR, heuristics, Long.MAX_VALUE, true);
 
 
         Either<Node, Boolean> solution = solver.solve();
