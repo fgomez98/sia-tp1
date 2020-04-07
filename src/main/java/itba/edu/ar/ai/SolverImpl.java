@@ -188,7 +188,7 @@ public class SolverImpl implements Solver {
         System.out.println(board.print(board.getInitialState()));
         System.out.println(board.printDeadBoxes());
 
-        Heuristics heuristics = Heuristics.POINT_POSITION;
+        Heuristics heuristics = Heuristics.POINT_POSITION ;
         if (board.getInitialState().getBoxes().size() > 5) {
             if (heuristics == Heuristics.MANHATTAN_OPT)
                 heuristics = Heuristics.MANHATTAN;
