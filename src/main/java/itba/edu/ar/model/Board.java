@@ -58,7 +58,7 @@ public class Board {
         }
 
 
-        if(board.getGoals().size() < 5){
+        if(board.getGoals().size() <= 5){
             board.combination = new LinkedList<>();
             List<Integer> numbers = new ArrayList<>();
             for (int i = 0; i < board.getGoals().size(); i++) {
